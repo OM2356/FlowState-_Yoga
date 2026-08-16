@@ -1,0 +1,6 @@
+{
+  "name": "FlowState - Realistic Yoga & Recovery Studio",
+  "description": "Mental-wellbeing and physical-recovery yoga platform with realistic human posture visualizers, dynamic flows, guided audio breathing, and pose encyclopedia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
