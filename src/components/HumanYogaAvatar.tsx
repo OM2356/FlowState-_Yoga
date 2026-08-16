@@ -92,7 +92,7 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
     switch (archetype) {
       case "tadasana":
         return (
-          <g transform={`scale(${breathScale})`} transform-origin="240 260">
+          <g transform={`scale(${breathScale})`} style={{ transformOrigin: "240px 260px" }}>
             {/* Mat floor */}
             <ellipse cx="240" cy="350" rx="140" ry="16" fill="#EDE6DA" />
             <line x1="120" y1="350" x2="360" y2="350" stroke="#D3C9B8" strokeWidth="2" strokeDasharray="4 4" />
@@ -155,7 +155,7 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
 
       case "downwardDog":
         return (
-          <g transform={`scale(${breathScale})`} transform-origin="240 220">
+          <g transform={`scale(${breathScale})`} style={{ transformOrigin: "240px 220px" }}>
             {/* Mat floor */}
             <line x1="60" y1="320" x2="420" y2="320" stroke="#CFC5B4" strokeWidth="3" />
             <ellipse cx="240" cy="320" rx="170" ry="8" fill="#EDE6DA" />
@@ -241,7 +241,7 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
 
       case "warrior1":
         return (
-          <g transform={`scale(${breathScale})`} transform-origin="240 220">
+          <g transform={`scale(${breathScale})`} style={{ transformOrigin: "240px 220px" }}>
             {/* Mat floor */}
             <line x1="80" y1="330" x2="400" y2="330" stroke="#CFC5B4" strokeWidth="2" />
             <ellipse cx="240" cy="330" rx="150" ry="8" fill="#EDE6DA" />
@@ -297,7 +297,7 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
 
       case "warrior2":
         return (
-          <g transform={`scale(${breathScale})`} transform-origin="240 220">
+          <g transform={`scale(${breathScale})`} style={{ transformOrigin: "240px 220px" }}>
             {/* Mat floor */}
             <line x1="70" y1="330" x2="410" y2="330" stroke="#CFC5B4" strokeWidth="2" />
             <ellipse cx="240" cy="330" rx="160" ry="8" fill="#EDE6DA" />
@@ -352,7 +352,7 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
 
       case "tree":
         return (
-          <g transform={`scale(${breathScale})`} transform-origin="240 260">
+          <g transform={`scale(${breathScale})`} style={{ transformOrigin: "240px 260px" }}>
             {/* Mat floor */}
             <ellipse cx="240" cy="350" rx="120" ry="14" fill="#EDE6DA" />
 
@@ -412,7 +412,7 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
 
       case "childPose":
         return (
-          <g transform={`scale(${breathScale})`} transform-origin="240 280">
+          <g transform={`scale(${breathScale})`} style={{ transformOrigin: "240px 280px" }}>
             {/* Mat floor */}
             <ellipse cx="240" cy="300" rx="160" ry="12" fill="#EDE6DA" />
             <line x1="80" y1="300" x2="400" y2="300" stroke="#CFC5B4" strokeWidth="2" />
@@ -456,7 +456,7 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
 
       case "pigeon":
         return (
-          <g transform={`scale(${breathScale})`} transform-origin="240 260">
+          <g transform={`scale(${breathScale})`} style={{ transformOrigin: "240px 260px" }}>
             {/* Mat floor */}
             <line x1="60" y1="300" x2="420" y2="300" stroke="#CFC5B4" strokeWidth="2" />
             <ellipse cx="240" cy="300" rx="160" ry="10" fill="#EDE6DA" />
@@ -502,7 +502,7 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
 
       case "bridge":
         return (
-          <g transform={`scale(${breathScale})`} transform-origin="240 260">
+          <g transform={`scale(${breathScale})`} style={{ transformOrigin: "240px 260px" }}>
             {/* Mat floor */}
             <line x1="60" y1="300" x2="420" y2="300" stroke="#CFC5B4" strokeWidth="2" />
             <ellipse cx="240" cy="300" rx="160" ry="10" fill="#EDE6DA" />
@@ -574,7 +574,7 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
 
       case "savasana":
         return (
-          <g transform={`scale(${breathScale})`} transform-origin="240 280">
+          <g transform={`scale(${breathScale})`} style={{ transformOrigin: "240px 280px" }}>
             {/* Mat floor */}
             <ellipse cx="240" cy="300" rx="180" ry="14" fill="#EDE6DA" />
             <line x1="40" y1="300" x2="440" y2="300" stroke="#CFC5B4" strokeWidth="2" />
@@ -617,7 +617,7 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
       default:
         // Generic Dynamic Anatomical Fallback for other poses (e.g. Cobra, Camel, Boat, Triangle, etc.)
         return (
-          <g transform={`scale(${breathScale})`} transform-origin="240 240">
+          <g transform={`scale(${breathScale})`} style={{ transformOrigin: "240px 240px" }}>
             {/* Mat floor */}
             <ellipse cx="240" cy="330" rx="150" ry="10" fill="#EDE6DA" />
             <line x1="70" y1="330" x2="410" y2="330" stroke="#CFC5B4" strokeWidth="2" />

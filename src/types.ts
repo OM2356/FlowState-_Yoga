@@ -187,3 +187,21 @@ export interface PhysicalTensionOption {
   iconName: string;
   accentColor: string;
 }
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+  level: DifficultyLevel;
+  focusAreas: string[];
+  mindfulMinutesGoal: number;
+  streakDays: number;
+  joinedDate: string;
+}
+
+export interface AuthState {
+  user: UserProfile | null;
+  isAuthenticated: boolean;
+}
+
