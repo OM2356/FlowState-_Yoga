@@ -67,31 +67,45 @@ export interface HumanPoseKinematics {
     | "warrior2" 
     | "warrior3" 
     | "tree" 
+    | "treePose"
     | "downwardDog" 
     | "upwardDog" 
     | "cobra" 
     | "childPose" 
     | "forwardFold" 
+    | "seatedForwardFold"
     | "chair" 
+    | "chairPose"
     | "triangle" 
     | "sideAngle" 
     | "pigeon" 
+    | "pigeonPose"
     | "crow" 
+    | "crowPose"
     | "boat" 
+    | "boatPose"
     | "bridge" 
+    | "bridgePose"
     | "wheel" 
+    | "wheelPose"
     | "camel" 
+    | "camelPose"
+    | "dancer"
+    | "dancerPose"
+    | "twistedLizard"
     | "seatedTwist" 
     | "butterfly" 
     | "savasana" 
     | "plank" 
     | "chaturanga" 
+    | "sidePlank"
+    | "halfMoon"
     | "headstand" 
     | "shoulderStand" 
     | "legsUpWall"
-    | "dancer"
     | "eagle"
     | "malasana"
+    | "goddess"
     | "catCow"
     | "fishPose";
 }
@@ -193,15 +207,42 @@ export interface UserProfile {
   name: string;
   email: string;
   avatar?: string;
+  role?: "user" | "developer" | "admin";
   level: DifficultyLevel;
   focusAreas: string[];
   mindfulMinutesGoal: number;
   streakDays: number;
   joinedDate: string;
+  lastActiveDate?: string;
 }
 
 export interface AuthState {
   user: UserProfile | null;
   isAuthenticated: boolean;
+  token?: string;
+}
+
+export type FeedbackCategory = "Bug" | "UI Issue" | "Feature Request" | "Content Improvement" | "Posture Feedback";
+
+export interface UserFeedbackRecord {
+  id: string;
+  userId?: string;
+  userName?: string;
+  userEmail?: string;
+  type: FeedbackCategory;
+  priority: "low" | "medium" | "high";
+  title: string;
+  description: string;
+  status: "open" | "in-progress" | "resolved";
+  createdAt: string;
+}
+
+export interface SecurityAuditLog {
+  id: string;
+  timestamp: string;
+  eventType: "AUTH_LOGIN" | "AUTH_REGISTER" | "AUTH_FAILED" | "RATE_LIMIT_HIT" | "SESSION_SYNC" | "FEEDBACK_SUBMITTED" | "AI_QUERY";
+  ipRedacted: string;
+  details: string;
+  status: "SUCCESS" | "WARN" | "BLOCKED";
 }
 

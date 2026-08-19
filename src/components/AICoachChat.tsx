@@ -88,8 +88,24 @@ How can I support your practice today?`,
     // Clean markdown bullets for speech
     const cleanText = text.replace(/[*#•]/g, "").replace(/\n+/g, ". ");
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 0.95; // calm, peaceful pace
+    utterance.rate = 0.92; // calm, peaceful pace
     utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices();
+    const indianVoice = voices.find(
+      (v) =>
+        v.lang === "en-IN" ||
+        v.lang === "en_IN" ||
+        v.name.toLowerCase().includes("india") ||
+        v.name.includes("Veena") ||
+        v.name.includes("Rishi") ||
+        v.name.includes("Aditi")
+    );
+    const preferred = indianVoice || voices.find((v) => v.lang.startsWith("en")) || voices[0];
+    if (preferred) {
+      utterance.voice = preferred;
+      if (preferred.lang) utterance.lang = preferred.lang;
+    }
 
     utterance.onend = () => {
       setIsSpeaking(false);

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { audioEngine } from "../utils/audioEngine";
-import { Wind, Play, Pause, RotateCcw, Volume2, VolumeX, Sparkles } from "lucide-react";
+import { Wind, Play, Pause, RotateCcw, Volume2, VolumeX, Sparkles, Heart, Activity } from "lucide-react";
 
 interface BreathPattern {
   id: string;
@@ -19,7 +19,7 @@ const BREATH_PATTERNS: BreathPattern[] = [
     id: "box",
     name: "Square / Box Breathing",
     sanskritName: "Sama Vritti Pranayama",
-    description: "Equal four-part ratio used to reset the central nervous system and restore laser focus.",
+    description: "Equal four-part ratio used to reset the central nervous system and restore calm laser focus.",
     inhale: 4,
     holdIn: 4,
     exhale: 4,
@@ -48,6 +48,17 @@ const BREATH_PATTERNS: BreathPattern[] = [
     holdOut: 2,
     benefit: "Soothes emotional tension & releases diaphragm tightness",
   },
+  {
+    id: "ujjayi",
+    name: "Ujjayi (Ocean Breath)",
+    sanskritName: "Victorious Breath",
+    description: "Gentle throat constriction creating a soothing whisper sound, building internal warmth and focus.",
+    inhale: 5,
+    holdIn: 0,
+    exhale: 5,
+    holdOut: 0,
+    benefit: "Builds internal somatic heat & deep meditative concentration",
+  }
 ];
 
 export const BreathworkStudio: React.FC = () => {
@@ -65,6 +76,7 @@ export const BreathworkStudio: React.FC = () => {
     setPhase("inhale");
     setCountdown(pattern.inhale);
     setCyclesCompleted(0);
+    audioEngine.stopAmbientDrone();
   };
 
   useEffect(() => {
@@ -72,6 +84,8 @@ export const BreathworkStudio: React.FC = () => {
 
     if (droneEnabled) {
       audioEngine.startAmbientDrone();
+    } else {
+      audioEngine.stopAmbientDrone();
     }
 
     return () => {
@@ -142,57 +156,75 @@ export const BreathworkStudio: React.FC = () => {
   const getPhaseInstruction = () => {
     switch (phase) {
       case "inhale":
-        return "Breathe in deeply through the nose, filling lower belly and ribs";
+        return "Breathe in slowly through the nose, expanding belly and ribcage.";
       case "hold-in":
-        return "Hold gently with relaxed shoulders and soft throat";
+        return "Hold gently with relaxed shoulders and softened jaw.";
       case "exhale":
-        return "Smooth, slow release through parted lips or nose";
+        return "Smooth, continuous release emptying lower lungs.";
       case "hold-out":
-        return "Rest in empty stillness before the next wave";
+        return "Rest in empty stillness before the next nourishing breath.";
     }
   };
 
   return (
     <div id="breathwork-studio-container" className="space-y-6">
       {/* Pattern Selector Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {BREATH_PATTERNS.map((p) => {
           const isSelected = selectedPattern.id === p.id;
           return (
             <button
               key={p.id}
               onClick={() => handleSelectPattern(p)}
-              className={`p-4 rounded-3xl border text-left transition-all ${
+              className={`p-4 rounded-3xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
                 isSelected
-                  ? "bg-[#5A6D56] text-white border-[#5A6D56] shadow-sm"
+                  ? "bg-[#4E6548] text-white border-[#4E6548] shadow-xs"
                   : "bg-[#FAF7F2] text-[#2C382E] border-[#E4DCD0] hover:bg-[#F2ECE0]"
               }`}
             >
-              <div className="flex items-center justify-between">
-                <h4 className="text-sm font-serif font-medium">{p.name}</h4>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${isSelected ? "bg-white/20 text-white" : "bg-[#EAE2D4] text-[#4A5A4E]"}`}>
-                  {p.inhale}-{p.holdIn}-{p.exhale}-{p.holdOut}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <h4 className="text-sm font-serif font-medium">{p.name}</h4>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${isSelected ? "bg-white/20 text-white" : "bg-[#EAE2D4] text-[#4A5A4E]"}`}>
+                    {p.inhale}-{p.holdIn}-{p.exhale}-{p.holdOut}
+                  </span>
+                </div>
+                <span className={`text-[11px] font-serif italic block ${isSelected ? "text-[#DCE4DC]" : "text-[#88786B]"}`}>
+                  {p.sanskritName}
                 </span>
+                <p className={`text-xs mt-2 line-clamp-2 leading-relaxed ${isSelected ? "text-[#E8EFE8]" : "text-[#5B695E]"}`}>
+                  {p.description}
+                </p>
               </div>
-              <span className={`text-[11px] font-serif italic block mt-0.5 ${isSelected ? "text-[#DCE4DC]" : "text-[#88786B]"}`}>
-                {p.sanskritName}
+              <span className={`text-[11px] mt-3 block font-medium ${isSelected ? "text-white/80" : "text-[#738375]"}`}>
+                • {p.benefit.slice(0, 35)}...
               </span>
-              <p className={`text-xs mt-2 line-clamp-2 leading-relaxed ${isSelected ? "text-[#E8EFE8]" : "text-[#5B695E]"}`}>
-                {p.description}
-              </p>
             </button>
           );
         })}
       </div>
 
       {/* Main Breathing Orb Arena */}
-      <div className="bg-[#FAF7F2] p-8 sm:p-12 rounded-3xl border border-[#E4DCD0] shadow-xs flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[440px]">
-        {/* Top pattern badge */}
-        <div className="mb-4">
-          <span className="text-xs font-semibold uppercase tracking-widest text-[#6F7E68]">
-            {selectedPattern.name}
-          </span>
-          <p className="text-xs text-[#7A887C] mt-0.5">{selectedPattern.benefit}</p>
+      <div className="bg-[#FAF7F2] p-8 sm:p-12 rounded-3xl border border-[#E4DCD0] shadow-xs flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[460px]">
+        {/* Top pattern badge & Sound Toggle */}
+        <div className="flex items-center justify-between w-full max-w-lg mb-2">
+          <div className="text-left">
+            <span className="text-xs font-semibold uppercase tracking-widest text-[#4E6548] block">
+              {selectedPattern.name}
+            </span>
+            <p className="text-xs text-[#7A887C]">{selectedPattern.benefit}</p>
+          </div>
+
+          <button
+            onClick={() => setDroneEnabled(!droneEnabled)}
+            className={`p-2 rounded-xl border text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
+              droneEnabled ? "bg-[#ECE4D6] text-[#2C382E] border-[#DDD2C0]" : "bg-transparent text-[#8B988E] border-transparent"
+            }`}
+            title="Toggle Ambient Meditation Drone"
+          >
+            {droneEnabled ? <Volume2 className="w-4 h-4 text-[#4E6548]" /> : <VolumeX className="w-4 h-4" />}
+            <span className="hidden sm:inline">{droneEnabled ? "Harmonic Sound" : "Muted"}</span>
+          </button>
         </div>
 
         {/* Dynamic Expanding/Contracting Visual Orb */}
@@ -203,8 +235,8 @@ export const BreathworkStudio: React.FC = () => {
               !isActive
                 ? "scale-95 bg-[#EAE2D4]/50 border border-[#D8CEBF]"
                 : phase === "inhale" || phase === "hold-in"
-                ? "scale-110 bg-[#5A6D56]/15 border-2 border-[#5A6D56] shadow-xl"
-                : "scale-85 bg-[#BF6F55]/15 border-2 border-[#BF6F55] shadow-inner"
+                ? "scale-110 bg-[#4E6548]/15 border-2 border-[#4E6548] shadow-xl"
+                : "scale-85 bg-[#C1664C]/15 border-2 border-[#C1664C] shadow-inner"
             }`}
           >
             {/* Inner pulsating core */}
@@ -213,12 +245,12 @@ export const BreathworkStudio: React.FC = () => {
                 !isActive
                   ? "bg-[#DDD3C2] text-[#4A5A4E]"
                   : phase === "inhale"
-                  ? "bg-[#5A6D56] text-white scale-105"
+                  ? "bg-[#4E6548] text-white scale-105"
                   : phase === "hold-in"
-                  ? "bg-[#4D5E4A] text-white scale-105"
+                  ? "bg-[#3D5237] text-white scale-105"
                   : phase === "exhale"
-                  ? "bg-[#BF6F55] text-white scale-90"
-                  : "bg-[#A65B43] text-white scale-90"
+                  ? "bg-[#C1664C] text-white scale-90"
+                  : "bg-[#9E4F38] text-white scale-90"
               }`}
             >
               <Wind className="w-6 h-6 mb-1 opacity-80" />
@@ -249,7 +281,7 @@ export const BreathworkStudio: React.FC = () => {
           <button
             id="btn-toggle-breathwork"
             onClick={togglePractice}
-            className="py-3 px-8 rounded-full bg-[#5A6D56] hover:bg-[#485944] text-white font-medium text-sm flex items-center gap-2 shadow-md hover:scale-105 transition-all"
+            className="py-3 px-8 rounded-full bg-[#4E6548] hover:bg-[#3D5237] text-white font-medium text-sm flex items-center gap-2 shadow-xs hover:scale-105 transition-all cursor-pointer"
           >
             {isActive ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
             <span>{isActive ? "Pause Breathing" : "Begin Pranayama"}</span>

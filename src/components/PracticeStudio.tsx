@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { FlowSequence, YogaPose, PracticeSessionRecord } from "../types";
 import { YOGA_POSES } from "../data/posesData";
 import { HumanYogaAvatar } from "./HumanYogaAvatar";
+import { ThreeYogaHuman } from "./ThreeYogaHuman";
 import { audioEngine } from "../utils/audioEngine";
 import confetti from "canvas-confetti";
 import { 
@@ -21,7 +22,8 @@ import {
   Award,
   Layers,
   Activity,
-  ArrowRight
+  ArrowRight,
+  Rotate3d
 } from "lucide-react";
 
 interface PracticeStudioProps {
@@ -43,10 +45,13 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
   const [totalElapsedTime, setTotalElapsedTime] = useState<number>(0);
   const [isCompleted, setIsCompleted] = useState<boolean>(false);
 
+  // View mode: 3D interactive human mannequin vs 2D anatomical map
+  const [viewMode, setViewMode] = useState<"3d-mannequin" | "2d-anatomy">("3d-mannequin");
+
   // Sound and voice toggles
   const [soundscape, setSoundscape] = useState<"drone" | "silent">("drone");
   const [voiceGuidance, setVoiceGuidance] = useState<boolean>(true);
-  const [showAnatomyHeatmap, setShowAnatomyHeatmap] = useState<boolean>(false);
+  const [showAnatomyHeatmap, setShowAnatomyHeatmap] = useState<boolean>(true);
 
   // Breath pacer state (Cycle: 4s Inhale, 2s Hold, 4s Exhale, 2s Hold)
   const [breathPhase, setBreathPhase] = useState<"inhale" | "hold-in" | "exhale" | "hold-out">("inhale");
@@ -70,10 +75,10 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
     // Play opening bowl gong
     audioEngine.playSingingBowl(261.63);
 
-    // Speak initial pose
+    // Speak initial pose in Indian English style
     if (voiceGuidance && currentPoseData) {
       const sideText = currentFlowItem?.side ? `on your ${currentFlowItem.side} side.` : "";
-      audioEngine.speakCue(`Beginning ${flow.title}. First posture: ${currentPoseData.name}, ${currentPoseData.sanskritName} ${sideText}`);
+      audioEngine.speakCue(`Namaste! Beginning ${flow.title}. First posture is ${currentPoseData.name}, ${currentPoseData.sanskritName} ${sideText}. Keep your spine comfortably straight and take deep breaths.`);
     }
 
     return () => {
@@ -101,11 +106,11 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
             // Play singing bowl chime transition
             audioEngine.playSingingBowl(329.63);
 
-            // Voice announcement
+            // Indian English voice announcement
             if (voiceGuidance && nextPose) {
               const sideText = nextPoseItem.side ? `on your ${nextPoseItem.side} side.` : "";
               const noteText = nextPoseItem.note ? ` ${nextPoseItem.note}` : "";
-              audioEngine.speakCue(`Next: ${nextPose.name}, ${nextPose.sanskritName} ${sideText}.${noteText}`);
+              audioEngine.speakCue(`Very good! Now slowly transition into ${nextPose.name}, ${nextPose.sanskritName} ${sideText}. Maintain steady breath.${noteText}`);
             }
 
             return nextPoseItem.durationSeconds;
@@ -114,7 +119,7 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
             setIsCompleted(true);
             setIsPlaying(false);
             audioEngine.playSingingBowl(523.25); // High C chime
-            audioEngine.speakCue("Practice complete. Take a moment to honor your dedication and feel the stillness in your body.");
+            audioEngine.speakCue("Shanti Shanti! Practice complete. Take a moment to honor your dedication and feel the stillness throughout your body. Namaste.");
             confetti({
               particleCount: 75,
               spread: 70,
@@ -296,28 +301,55 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
 
       {/* Main Studio Arena */}
       <div className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-8 py-4 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center overflow-y-auto">
-        {/* Left Arena: Realistic Human Yoga Avatar Simulation */}
+        {/* Left Arena: Realistic 3D Human Yoga Mannequin Simulation */}
         <div className="lg:col-span-7 flex flex-col items-center justify-center">
-          <HumanYogaAvatar
-            pose={currentPoseData}
-            isBreathing={true}
-            breathPhase={breathPhase}
-            showMuscleHeatmap={showAnatomyHeatmap}
-            showAlignmentGuides={true}
-            size="lg"
-            className="w-full max-w-[520px] bg-[#FAF8F2] border-[#DDD5C5]"
-          />
+          {/* Realistic 3D Human Yoga Mannequin Simulation */}
+          <div className="w-full max-w-[560px] h-[380px] sm:h-[440px] rounded-3xl overflow-hidden border border-[#DDD5C5] shadow-md bg-[#FAF8F2] relative">
+            <ThreeYogaHuman
+              pose={currentPoseData}
+              isBreathing={isPlaying}
+              showMuscleHeatmap={showAnatomyHeatmap}
+              materialMode={showAnatomyHeatmap ? "heatmap" : "skin"}
+              className="w-full h-full"
+            />
+          </div>
 
-          {/* Quick anatomical focus tag */}
-          <div className="w-full max-w-[520px] mt-2 flex items-center justify-between text-xs text-[#6A786E] px-1">
-            <span className="italic font-serif text-[#7D6A5D]">{currentPoseData.sanskritName}</span>
-            <button
-              onClick={() => setShowAnatomyHeatmap(!showAnatomyHeatmap)}
-              className="flex items-center gap-1 hover:text-[#2D3930] font-medium transition-colors"
-            >
-              <Activity className="w-3.5 h-3.5 text-[#BF6F55]" />
-              <span>{showAnatomyHeatmap ? "Hide Muscle Glow" : "Show Muscle Glow"}</span>
-            </button>
+          {/* Controls: 3D Display Mode & Anatomical focus tag */}
+          <div className="w-full max-w-[560px] mt-2.5 flex items-center justify-between text-xs text-[#6A786E] px-1">
+            <div className="flex items-center gap-1.5 bg-[#E8DFD0] p-0.5 rounded-xl">
+              <button
+                id="studio-btn-3d"
+                onClick={() => setShowAnatomyHeatmap(false)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+                  !showAnatomyHeatmap ? "bg-[#4E6548] text-white shadow-xs" : "text-[#47554A] hover:text-[#1E231F]"
+                }`}
+              >
+                <Rotate3d className="w-3.5 h-3.5" />
+                <span>3D Skin</span>
+              </button>
+              <button
+                id="studio-btn-2d"
+                onClick={() => setShowAnatomyHeatmap(true)}
+                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all ${
+                  showAnatomyHeatmap ? "bg-[#4E6548] text-white shadow-xs" : "text-[#47554A] hover:text-[#1E231F]"
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5" />
+                <span>3D Heatmap</span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="italic font-serif text-[#7D6A5D] hidden sm:inline">{currentPoseData.sanskritName}</span>
+              <button
+                id="studio-btn-muscle-glow"
+                onClick={() => setShowAnatomyHeatmap(!showAnatomyHeatmap)}
+                className="flex items-center gap-1 hover:text-[#2D3930] font-medium transition-colors text-xs bg-[#EAE2D4] px-2.5 py-1 rounded-lg border border-[#DCD0BE]"
+              >
+                <Activity className="w-3.5 h-3.5 text-[#BF6F55]" />
+                <span>{showAnatomyHeatmap ? "Heatmap On" : "Heatmap Off"}</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -389,12 +421,12 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
           <span className="hidden sm:inline">Previous Pose</span>
         </button>
 
-        {/* Center Primary Play/Pause */}
+          {/* Center Primary Play/Pause */}
         <div className="flex items-center gap-3">
           <button
             id="btn-toggle-play-practice"
             onClick={handleTogglePlay}
-            className="w-14 h-14 rounded-full bg-[#5A6D56] hover:bg-[#485944] text-white flex items-center justify-center shadow-md transition-transform hover:scale-105 active:scale-95"
+            className="w-14 h-14 rounded-full bg-[#4E6548] hover:bg-[#3D5237] text-white flex items-center justify-center shadow-md transition-transform hover:scale-105 active:scale-95 cursor-pointer"
             title={isPlaying ? "Pause Flow" : "Resume Flow"}
           >
             {isPlaying ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-0.5" />}
@@ -405,10 +437,10 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
         <button
           id="btn-next-pose"
           onClick={handleNextPose}
-          className="p-3 rounded-2xl bg-[#5A6D56] hover:bg-[#485944] text-white transition-colors shadow-xs flex items-center gap-1.5 text-xs font-medium"
+          className="p-3 rounded-2xl bg-[#4E6548] hover:bg-[#3D5237] text-white transition-colors shadow-xs flex items-center gap-1.5 text-xs font-medium cursor-pointer"
         >
           <span className="hidden sm:inline">
-            {currentPoseIndex === flow.poses.length - 1 ? "Finish Ritual" : "Next Pose"}
+            {currentPoseIndex === flow.poses.length - 1 ? "Finish Practice" : "Next Pose"}
           </span>
           <SkipForward className="w-4 h-4" />
         </button>
@@ -418,16 +450,16 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
       {isCompleted && (
         <div id="practice-completion-modal" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1F1B]/70 backdrop-blur-sm animate-in fade-in">
           <div className="w-full max-w-lg bg-[#FBF9F5] rounded-3xl border border-[#E2DAD0] shadow-2xl p-6 sm:p-8 space-y-6 text-center">
-            <div className="w-16 h-16 rounded-full bg-[#5A6D56]/15 text-[#5A6D56] mx-auto flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-[#4E6548]/15 text-[#4E6548] mx-auto flex items-center justify-center">
               <Award className="w-8 h-8" />
             </div>
 
             <div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-[#6F7E68]">
-                Ritual Completed
+              <span className="text-xs font-semibold uppercase tracking-widest text-[#4E6548]">
+                Practice Completed
               </span>
               <h2 className="text-2xl font-serif font-medium text-[#1A221C] mt-1">
-                You Returned to Yourself
+                Honoring Your Dedication
               </h2>
               <p className="text-xs text-[#5D6B60] mt-1">
                 Completed {Math.round(totalElapsedTime / 60)} minutes across {flow.poses.length} postures.
@@ -446,9 +478,9 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
                       key={feeling}
                       type="button"
                       onClick={() => setPhysicalFeeling(feeling)}
-                      className={`p-2.5 rounded-xl border text-left transition-all ${
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                         physicalFeeling === feeling
-                          ? "bg-[#5A6D56] text-white border-[#5A6D56] font-medium shadow-xs"
+                          ? "bg-[#4E6548] text-white border-[#4E6548] font-medium shadow-xs"
                           : "bg-[#F3EDE2] text-[#475549] border-[#DFD6C7] hover:bg-[#E8DFCFC0]"
                       }`}
                     >
@@ -468,9 +500,9 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
                       key={mood}
                       type="button"
                       onClick={() => setMoodAfter(mood)}
-                      className={`p-2.5 rounded-xl border text-left transition-all ${
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
                         moodAfter === mood
-                          ? "bg-[#BF6F55] text-white border-[#BF6F55] font-medium shadow-xs"
+                          ? "bg-[#C1664C] text-white border-[#C1664C] font-medium shadow-xs"
                           : "bg-[#F3EDE2] text-[#475549] border-[#DFD6C7] hover:bg-[#E8DFCFC0]"
                       }`}
                     >
@@ -485,9 +517,9 @@ export const PracticeStudio: React.FC<PracticeStudioProps> = ({
             <button
               id="btn-save-practice-reflection"
               onClick={handleSaveReflection}
-              className="w-full py-3.5 rounded-2xl bg-[#5A6D56] hover:bg-[#485944] text-white font-medium text-sm flex items-center justify-center gap-2 shadow-md transition-colors"
+              className="w-full py-3.5 rounded-2xl bg-[#4E6548] hover:bg-[#3D5237] text-white font-medium text-sm flex items-center justify-center gap-2 shadow-md transition-colors cursor-pointer"
             >
-              <span>Save Ritual & Return to Studio</span>
+              <span>Save Session & Return to Studio</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>

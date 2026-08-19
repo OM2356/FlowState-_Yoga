@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { YogaPose, FlowSequence } from "../types";
 import { YOGA_POSES } from "../data/posesData";
-import { HumanYogaAvatar } from "./HumanYogaAvatar";
+import { ThreeYogaHuman } from "./ThreeYogaHuman";
 import { 
   Activity, 
   Play, 
@@ -11,7 +11,8 @@ import {
   Clock, 
   ChevronRight,
   Info,
-  CheckCircle2
+  CheckCircle2,
+  Rotate3d
 } from "lucide-react";
 
 interface BodyTensionMapProps {
@@ -248,6 +249,19 @@ export const BodyTensionMap: React.FC<BodyTensionMapProps> = ({
                   <p className="text-xs text-[#4F5E52] leading-relaxed line-clamp-2">
                     {pose.description}
                   </p>
+
+                  <div className="mt-3 h-[130px] rounded-xl overflow-hidden bg-[#FAF7F0] border border-[#EAE1D3] relative">
+                    <ThreeYogaHuman
+                      pose={pose}
+                      height={130}
+                      interactiveControls={false}
+                      className="w-full h-full"
+                    />
+                    <div className="absolute top-1.5 right-1.5 bg-black/40 backdrop-blur-xs px-1.5 py-0.5 rounded-full text-[9px] font-semibold text-white flex items-center gap-0.5">
+                      <Rotate3d className="w-2.5 h-2.5" />
+                      <span>3D</span>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="mt-4 pt-3 border-t border-[#E8DFD2] flex items-center gap-2">

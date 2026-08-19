@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FlowSequence, FlowItem, YogaPose, BenefitTag } from "../types";
 import { YOGA_POSES } from "../data/posesData";
 import { MOOD_OPTIONS } from "../data/presetFlows";
-import { HumanYogaAvatar } from "./HumanYogaAvatar";
+import { ThreeYogaHuman } from "./ThreeYogaHuman";
 import { 
   Sparkles, 
   Play, 
@@ -16,7 +16,8 @@ import {
   ShieldAlert, 
   Monitor, 
   Sun, 
-  Moon 
+  Moon,
+  Rotate3d
 } from "lucide-react";
 
 interface InstantFlowGeneratorProps {
@@ -320,14 +321,18 @@ export const InstantFlowGenerator: React.FC<InstantFlowGeneratorProps> = ({
                       </span>
                     </div>
 
-                    {/* Compact Human Vector Silhouette Preview */}
-                    <div className="mt-3 py-1 flex items-center justify-center bg-[#FAF7F0] rounded-xl border border-[#EAE1D3]">
-                      <HumanYogaAvatar
+                    {/* Compact 3D Human Pose Preview */}
+                    <div className="mt-3 h-[130px] rounded-xl overflow-hidden bg-[#FAF7F0] border border-[#EAE1D3] relative">
+                      <ThreeYogaHuman
                         pose={poseData}
-                        size="sm"
-                        showAlignmentGuides={false}
-                        className="bg-transparent border-0 shadow-none p-0 max-h-[110px]"
+                        height={130}
+                        interactiveControls={false}
+                        className="w-full h-full"
                       />
+                      <div className="absolute top-1.5 right-1.5 bg-black/40 backdrop-blur-xs px-1.5 py-0.5 rounded-full text-[9px] font-semibold text-white flex items-center gap-0.5">
+                        <Rotate3d className="w-2.5 h-2.5" />
+                        <span>3D</span>
+                      </div>
                     </div>
                   </div>
                 );

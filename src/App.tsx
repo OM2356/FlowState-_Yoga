@@ -14,7 +14,12 @@ import { BreathworkStudio } from "./components/BreathworkStudio";
 import { BodyTensionMap } from "./components/BodyTensionMap";
 import { BeginnerGuide } from "./components/BeginnerGuide";
 import { UserProfileDashboard } from "./components/UserProfileDashboard";
+import { DeveloperPortal } from "./components/DeveloperPortal";
+import { UserFeedbackModal } from "./components/UserFeedbackModal";
 import { AuthModal } from "./components/AuthModal";
+import { AuthLandingPage } from "./components/AuthLandingPage";
+import { SuryaNamaskarStudio } from "./components/SuryaNamaskarStudio";
+import { ThreeYogaStudio } from "./components/ThreeYogaStudio";
 import { 
   Compass, 
   Layers, 
@@ -36,12 +41,17 @@ import {
   Eye,
   Calendar,
   Sun,
-  User
+  User,
+  Terminal,
+  MessageSquarePlus,
+  LogOut,
+  ShieldAlert,
+  Rotate3d
 } from "lucide-react";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<
-    "mood" | "instant" | "tension" | "sequences" | "poses" | "breathwork" | "coach" | "guide" | "history" | "profile"
+    "mood" | "studio3d" | "surya" | "instant" | "tension" | "sequences" | "poses" | "breathwork" | "coach" | "guide" | "profile" | "developer"
   >("mood");
   
   // Active modals & live practice states
@@ -49,6 +59,7 @@ export default function App() {
   const [inspectedPose, setInspectedPose] = useState<YogaPose | null>(null);
   const [isBuilderOpen, setIsBuilderOpen] = useState<boolean>(false);
   const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState<boolean>(false);
 
   // User Profile & Authentication state
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
@@ -60,6 +71,28 @@ export default function App() {
     }
   });
 
+  // Check if current user is authorized developer (Strictly omkarsathe3103@gmail.com)
+  const isCurrentUserDeveloper = Boolean(
+    currentUser?.email && currentUser.email.toLowerCase().trim() === "omkarsathe3103@gmail.com"
+  );
+
+  // If unauthorized user lands on developer tab, redirect to mood
+  useEffect(() => {
+    if (activeTab === "developer" && !isCurrentUserDeveloper) {
+      setActiveTab("mood");
+    }
+  }, [activeTab, isCurrentUserDeveloper]);
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem("flowstate_auth_user");
+      localStorage.removeItem("flowstate_auth_token");
+      sessionStorage.removeItem("flowstate_dev_authorized");
+    } catch {}
+    setCurrentUser(null);
+    setActiveTab("mood");
+  };
+
   // User History & Stats
   const [sessionHistory, setSessionHistory] = useState<PracticeSessionRecord[]>(() => {
     try {
@@ -69,8 +102,24 @@ export default function App() {
     }
   });
 
-  const totalMindfulMinutes = sessionHistory.reduce((acc, curr) => acc + curr.durationMinutes, 0);
-  const totalSessionsCount = sessionHistory.length;
+  // Fetch remote session history if logged in
+  useEffect(() => {
+    if (currentUser?.id) {
+      fetch(`/api/sessions?userId=${currentUser.id}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (Array.isArray(data.sessions) && data.sessions.length > 0) {
+            setSessionHistory((prev) => {
+              const combined = [...data.sessions, ...prev];
+              // De-duplicate by id
+              const unique = Array.from(new Map(combined.map((s) => [s.id, s])).values());
+              return unique;
+            });
+          }
+        })
+        .catch(() => {});
+    }
+  }, [currentUser]);
 
   // Pose of the Day (rotates based on day of month)
   const dayOfMonth = new Date().getDate();
@@ -118,7 +167,8 @@ export default function App() {
     } catch {}
   };
 
-  const handleSessionComplete = (record: PracticeSessionRecord) => {
+  // Sync completed session with local storage AND backend storage
+  const handleSessionComplete = async (record: PracticeSessionRecord) => {
     setSessionHistory((prev) => {
       const updated = [record, ...prev];
       try {
@@ -126,7 +176,58 @@ export default function App() {
       } catch {}
       return updated;
     });
+
+    // Sync to backend DB for developer-side visibility
+    try {
+      await fetch("/api/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: currentUser?.id || "guest-user",
+          userName: currentUser?.name || "Guest Practitioner",
+          sequenceId: record.sequenceId,
+          sequenceTitle: record.sequenceTitle,
+          durationMinutes: record.durationMinutes,
+          moodBefore: record.moodBefore,
+          moodAfter: record.moodAfter,
+          physicalFeelingAfter: record.physicalFeelingAfter,
+          rating: record.rating,
+          notes: record.notes,
+        }),
+      });
+    } catch (e) {
+      console.warn("Backend session sync deferred:", e);
+    }
   };
+
+  // If user is not authenticated yet, render the full Login & Registration landing page
+  if (!currentUser) {
+    return (
+      <AuthLandingPage
+        onLoginSuccess={(user) => {
+          setCurrentUser(user);
+        }}
+      />
+    );
+  }
+
+  // Defined navigation tabs - Dev Portal is ONLY included for the developer
+  const navTabs = [
+    { id: "mood", label: "Mood Flow", icon: Smile },
+    { id: "studio3d", label: "3D Studio", icon: Rotate3d, isSpecial: true },
+    { id: "surya", label: "Surya Namaskar 3D", icon: Sun, isSpecial: true },
+    { id: "instant", label: "AI Generator", icon: Sparkles },
+    { id: "tension", label: "Body Relief", icon: Activity },
+    { id: "sequences", label: "Yoga Flows", icon: Layers },
+    { id: "poses", label: "Pose Library", icon: BookOpen },
+    { id: "breathwork", label: "Breathing", icon: Wind },
+    { id: "coach", label: "AI Coach", icon: Bot },
+    { id: "guide", label: "Guide", icon: ShieldCheck },
+    { id: "profile", label: "My Profile", icon: User },
+    ...(isCurrentUserDeveloper
+      ? [{ id: "developer", label: "Dev Portal", icon: Terminal, isDev: true }]
+      : []),
+  ];
 
   return (
     <div id="flowstate-root" className="min-h-screen bg-[#F5EFEB] text-[#1A221C] font-sans antialiased flex flex-col selection:bg-[#4E6548]/20">
@@ -154,86 +255,101 @@ export default function App() {
             </div>
           </div>
 
-          {/* Desktop Navigation Links */}
+          {/* Desktop Navigation Links (Developer portal only rendered for omkarsathe3103@gmail.com / developer) */}
           <nav className="hidden xl:flex items-center gap-1 bg-[#ECE4D6] p-1.5 rounded-2xl border border-[#DDD3C2]">
-            {[
-              { id: "mood", label: "Mood Flow", icon: Smile },
-              { id: "instant", label: "AI Generator", icon: Sparkles },
-              { id: "tension", label: "Body Relief", icon: Activity },
-              { id: "sequences", label: "Yoga Flows", icon: Layers },
-              { id: "poses", label: "Pose Library", icon: BookOpen },
-              { id: "breathwork", label: "Breathing", icon: Wind },
-              { id: "coach", label: "AI Coach", icon: Bot },
-              { id: "guide", label: "Guide", icon: ShieldCheck },
-              { id: "profile", label: "My Profile", icon: User },
-            ].map((tab) => {
+            {navTabs.map((tab) => {
               const Icon = tab.icon;
               const isSelected = activeTab === tab.id;
+              const isDevTab = (tab as any).isDev;
               return (
                 <button
                   key={tab.id}
                   id={`nav-tab-${tab.id}`}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-3.5 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                  className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
                     isSelected
-                      ? "bg-[#FAF8F4] text-[#1A221C] shadow-xs"
+                      ? isDevTab
+                        ? "bg-[#1E2520] text-[#8BBA85] shadow-xs"
+                        : "bg-[#FAF8F4] text-[#1A221C] shadow-xs"
+                      : isDevTab
+                      ? "text-[#4A5D4E] hover:text-[#1E2520] hover:bg-[#DDD3C2]"
                       : "text-[#546457] hover:text-[#1A221C] hover:bg-[#E2D8C8]/60"
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isSelected ? "text-[#4E6548]" : "text-[#738275]"}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isSelected ? (isDevTab ? "text-[#8BBA85]" : "text-[#4E6548]") : "text-[#738275]"}`} />
                   <span>{tab.label}</span>
                 </button>
               );
             })}
           </nav>
 
-          {/* Right quick stats & Profile Button */}
-          <div className="flex items-center gap-3">
+          {/* Right quick stats, Feedback & Profile Button */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={() => setIsFeedbackOpen(true)}
+              className="p-2 sm:px-3 sm:py-2 rounded-2xl bg-[#EBE2D4] hover:bg-[#DDD2BF] text-[#2C382F] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Share Feedback"
+            >
+              <MessageSquarePlus className="w-4 h-4 text-[#4E6548]" />
+              <span className="hidden md:inline">Feedback</span>
+            </button>
+
+            {/* Current Member Status & Profile Modal Trigger */}
             <button
               onClick={() => setIsAuthOpen(true)}
               className="flex items-center gap-2 px-3.5 py-2 rounded-2xl bg-[#EBE2D4] hover:bg-[#DDD2BF] text-xs font-semibold text-[#3B4A3E] border border-[#DDD2BF] transition-colors cursor-pointer"
+              title="Account Preferences"
             >
               <div className="w-5 h-5 rounded-full bg-[#4E6548] text-white flex items-center justify-center text-[10px] font-bold">
-                {currentUser ? currentUser.name.charAt(0).toUpperCase() : <User className="w-3 h-3" />}
+                {currentUser.name.charAt(0).toUpperCase()}
               </div>
               <span className="hidden sm:inline">
-                {currentUser ? currentUser.name.split(" ")[0] : "Member Login"}
+                {currentUser.name.split(" ")[0]}
               </span>
+              {isCurrentUserDeveloper && (
+                <span className="text-[10px] bg-[#1E2520] text-[#8BBA85] font-bold px-1.5 py-0.2 rounded-md">
+                  DEV
+                </span>
+              )}
+            </button>
+
+            {/* Log Out Button */}
+            <button
+              onClick={handleLogout}
+              className="p-2 sm:px-3 sm:py-2 rounded-2xl bg-[#EBE2D4] hover:bg-[#E2D2C2] text-[#8F3E2C] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Sign Out"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden lg:inline">Log Out</span>
             </button>
 
             <button
               id="btn-quick-play-first-flow"
               onClick={() => handleStartFlow(PRESET_FLOWS[0])}
-              className="py-2.5 px-4.5 rounded-2xl bg-[#4E6548] hover:bg-[#3D5237] text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
+              className="py-2.5 px-4 rounded-2xl bg-[#4E6548] hover:bg-[#3D5237] text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
             >
               <Play className="w-4 h-4 fill-current" />
-              <span>15m Desk Reset</span>
+              <span className="hidden sm:inline">15m Desk Reset</span>
+              <span className="sm:hidden">Start</span>
             </button>
           </div>
         </div>
 
-        {/* Mobile / Tablet Horizontal Navigation Strip */}
+        {/* Mobile / Tablet Horizontal Navigation Strip (Dev Portal only included for developer) */}
         <div className="xl:hidden flex items-center gap-1.5 overflow-x-auto pt-3 pb-1 no-scrollbar">
-          {[
-            { id: "mood", label: "Mood Flow", icon: Smile },
-            { id: "instant", label: "AI Flow", icon: Sparkles },
-            { id: "tension", label: "Body Relief", icon: Activity },
-            { id: "sequences", label: "Flows", icon: Layers },
-            { id: "poses", label: "Poses", icon: BookOpen },
-            { id: "breathwork", label: "Breathing", icon: Wind },
-            { id: "coach", label: "AI Coach", icon: Bot },
-            { id: "guide", label: "Guide", icon: ShieldCheck },
-            { id: "profile", label: "Profile", icon: User },
-          ].map((tab) => {
+          {navTabs.map((tab) => {
             const Icon = tab.icon;
             const isSelected = activeTab === tab.id;
+            const isDevTab = (tab as any).isDev;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 border transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 border transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-[#4E6548] text-white border-[#4E6548] shadow-xs"
+                    ? isDevTab
+                      ? "bg-[#1E2520] text-[#8BBA85] border-[#1E2520] shadow-xs"
+                      : "bg-[#4E6548] text-white border-[#4E6548] shadow-xs"
                     : "bg-[#EFE8DC] text-[#425044] border-[#DFD6C7]"
                 }`}
               >
@@ -295,6 +411,38 @@ export default function App() {
           />
         )}
 
+        {activeTab === "studio3d" && (
+          <ThreeYogaStudio
+            onStartPracticeFlow={handlePracticeSinglePose}
+            onPoseInspected={(pose) => setInspectedPose(pose)}
+          />
+        )}
+
+        {activeTab === "surya" && (
+          <SuryaNamaskarStudio
+            currentUserId={currentUser?.id}
+            currentUserName={currentUser?.name}
+            onSessionComplete={(session) => {
+              setSessionHistory((prev) => [
+                {
+                  id: `session-${Date.now()}`,
+                  flowId: "surya-namaskar-flow",
+                  flowTitle: session.title,
+                  category: "morningEnergy",
+                  completedAt: session.completed_at,
+                  durationMinutes: session.durationMinutes,
+                  totalPosesCompleted: session.rounds * 12,
+                  rating: 5,
+                },
+                ...prev,
+              ]);
+            }}
+            onOpenCoach={(query) => {
+              setActiveTab("coach");
+            }}
+          />
+        )}
+
         {activeTab === "instant" && (
           <InstantFlowGenerator
             onStartFlow={handleStartFlow}
@@ -341,7 +489,31 @@ export default function App() {
             sessionHistory={sessionHistory}
             onOpenAuth={() => setIsAuthOpen(true)}
             onStartFlow={handleStartFlow}
+            onOpenFeedback={() => setIsFeedbackOpen(true)}
+            onOpenDeveloperPortal={() => setActiveTab("developer")}
           />
+        )}
+
+        {activeTab === "developer" && (
+          isCurrentUserDeveloper ? (
+            <DeveloperPortal currentUser={currentUser} />
+          ) : (
+            <div className="max-w-xl mx-auto my-12 p-8 bg-[#FAF7F2] rounded-3xl border border-[#E2DAD0] text-center space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-[#C1664C]/15 text-[#C1664C] flex items-center justify-center mx-auto">
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              <h2 className="text-xl font-serif font-medium text-[#1A221C]">Restricted Access Area</h2>
+              <p className="text-xs text-[#5D6B60]">
+                The Developer Portal is exclusively accessible to the authorized developer account (omkarsathe3103@gmail.com).
+              </p>
+              <button
+                onClick={() => setActiveTab("mood")}
+                className="px-4 py-2 rounded-xl bg-[#4E6548] text-white text-xs font-semibold"
+              >
+                Return to Studio
+              </button>
+            </div>
+          )
         )}
       </main>
 
@@ -353,7 +525,26 @@ export default function App() {
             <span className="font-serif font-medium text-[#1A221C] text-base">FlowState</span>
             <span>— Simple, safe, and accessible yoga for everyone</span>
           </div>
-          <span>Gentle posture guidance • Nasal breathing pacers • Mindful recovery</span>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setIsFeedbackOpen(true)}
+              className="text-xs text-[#4E6548] hover:underline font-semibold cursor-pointer"
+            >
+              Report an Issue
+            </button>
+            {isCurrentUserDeveloper && (
+              <>
+                <span>•</span>
+                <button
+                  onClick={() => setActiveTab("developer")}
+                  className="text-xs text-[#1E2520] hover:underline font-semibold cursor-pointer flex items-center gap-1"
+                >
+                  <Terminal className="w-3 h-3 text-[#8BBA85]" />
+                  <span>Developer Portal</span>
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </footer>
 
@@ -393,10 +584,18 @@ export default function App() {
         onLogout={() => {
           try {
             localStorage.removeItem("flowstate_auth_user");
+            localStorage.removeItem("flowstate_auth_token");
           } catch {}
           setCurrentUser(null);
         }}
         onUpdateProfile={(updated) => setCurrentUser(updated)}
+      />
+
+      {/* User Issue & Feedback Modal */}
+      <UserFeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+        currentUser={currentUser}
       />
     </div>
   );

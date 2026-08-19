@@ -14,10 +14,12 @@ import {
   LogOut, 
   LogIn, 
   UserPlus, 
-  X,
-  Edit2,
-  Calendar,
-  Layers
+  X, 
+  Edit2, 
+  Calendar, 
+  Layers,
+  Terminal,
+  Key
 } from "lucide-react";
 
 interface AuthModalProps {
@@ -43,11 +45,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [name, setName] = useState("");
   const [level, setLevel] = useState<"beginner" | "intermediate" | "advanced">("beginner");
   const [dailyGoal, setDailyGoal] = useState<number>(15);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleAuthSubmit = (e: React.FormEvent) => {
+  const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -61,43 +64,103 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    // Client-side secure authentication & session management simulation
-    const mockUser: UserProfile = {
-      id: "usr-" + Date.now(),
-      name: mode === "signup" ? name : (email.split("@")[0] || "Yogi Member"),
-      email: email,
-      level: level,
-      focusAreas: ["Spine Mobility", "Lower Back", "Stress Relief"],
-      mindfulMinutesGoal: dailyGoal,
-      streakDays: 3,
-      joinedDate: new Date().toISOString(),
-    };
+    setIsLoading(true);
 
     try {
-      localStorage.setItem("flowstate_auth_user", JSON.stringify(mockUser));
-    } catch {}
+      const endpoint = mode === "signup" ? "/api/auth/register" : "/api/auth/login";
+      const payload =
+        mode === "signup"
+          ? { email, password, name, level, mindfulMinutesGoal: dailyGoal }
+          : { email, password };
 
-    onLogin(mockUser);
-    onClose();
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Authentication failed.");
+      }
+
+      if (data.token) {
+        localStorage.setItem("flowstate_auth_token", data.token);
+      }
+      if (data.user) {
+        localStorage.setItem("flowstate_auth_user", JSON.stringify(data.user));
+        onLogin(data.user);
+      }
+
+      onClose();
+    } catch (err: any) {
+      setError(err.message || "An unexpected network error occurred.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser) return;
 
-    const updated: UserProfile = {
-      ...currentUser,
-      name: name || currentUser.name,
-      level: level,
-      mindfulMinutesGoal: dailyGoal,
-    };
-
+    setIsLoading(true);
     try {
-      localStorage.setItem("flowstate_auth_user", JSON.stringify(updated));
-    } catch {}
+      const token = localStorage.getItem("flowstate_auth_token") || "";
+      const updated: UserProfile = {
+        ...currentUser,
+        name: name || currentUser.name,
+        level: level,
+        mindfulMinutesGoal: dailyGoal,
+      };
 
-    onUpdateProfile(updated);
-    onClose();
+      await fetch("/api/auth/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          name: updated.name,
+          level: updated.level,
+          mindfulMinutesGoal: updated.mindfulMinutesGoal,
+        }),
+      });
+
+      localStorage.setItem("flowstate_auth_user", JSON.stringify(updated));
+      onUpdateProfile(updated);
+      onClose();
+    } catch {
+      // Fallback local update
+      onUpdateProfile({ ...currentUser, name: name || currentUser.name, level, mindfulMinutesGoal: dailyGoal });
+      onClose();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Quick fill developer account
+  const handleQuickFillOmkar = () => {
+    setMode("login");
+    setEmail("omkarsathe3103@gmail.com");
+    setPassword("flowstate2026");
+    setError(null);
+  };
+
+  const handleQuickFillDev = () => {
+    setMode("login");
+    setEmail("dev@flowstate.internal");
+    setPassword("DeveloperPass123!");
+    setError(null);
+  };
+
+  const handleQuickFillMember = () => {
+    setMode("login");
+    setEmail("elena.yogi@example.com");
+    setPassword("YogiMember2026!");
+    setError(null);
   };
 
   return (
@@ -142,6 +205,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     <span className="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-md bg-[#4E6548]/10 text-[#4E6548]">
                       {currentUser.level}
                     </span>
+                    {currentUser.role === "developer" && (
+                      <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-md bg-[#1E2520] text-[#8BBA85]">
+                        DEV
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs text-[#637266]">{currentUser.email}</p>
                 </div>
@@ -215,9 +283,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <div className="flex items-center gap-3 pt-2">
                   <button
                     type="submit"
+                    disabled={isLoading}
                     className="flex-1 py-3 rounded-2xl bg-[#4E6548] hover:bg-[#3D5237] text-white text-xs sm:text-sm font-semibold shadow-xs transition-colors cursor-pointer"
                   >
-                    Save Preferences
+                    {isLoading ? "Saving..." : "Save Preferences"}
                   </button>
                   <button
                     type="button"
@@ -294,10 +363,40 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-2xl bg-[#4E6548] hover:bg-[#3D5237] text-white font-semibold text-sm shadow-xs transition-colors cursor-pointer mt-2"
+                disabled={isLoading}
+                className="w-full py-3.5 rounded-2xl bg-[#4E6548] hover:bg-[#3D5237] disabled:opacity-50 text-white font-semibold text-sm shadow-xs transition-colors cursor-pointer mt-2"
               >
-                {mode === "login" ? "Sign In to Your Rituals" : "Create Account & Start Practicing"}
+                {isLoading
+                  ? "Verifying..."
+                  : mode === "login"
+                  ? "Sign In to Your Rituals"
+                  : "Create Account & Start Practicing"}
               </button>
+
+              {/* Quick Fill Credentials helpers */}
+              <div className="pt-2 border-t border-[#EAE0D4] space-y-2">
+                <span className="text-[11px] font-semibold text-[#667768] block text-center">
+                  Quick Demo / Backend Testing Logins:
+                </span>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleQuickFillOmkar}
+                    className="flex-1 py-1.5 px-2 rounded-xl bg-[#1E2520] hover:bg-[#2F3A31] text-[#8BBA85] text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <Terminal className="w-3 h-3" />
+                    <span>Omkar (Dev)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleQuickFillMember}
+                    className="flex-1 py-1.5 px-2 rounded-xl bg-[#EBE2D4] hover:bg-[#DDD2BF] text-[#2C382F] text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                  >
+                    <User className="w-3 h-3 text-[#4E6548]" />
+                    <span>Elena (Member)</span>
+                  </button>
+                </div>
+              </div>
 
               <div className="text-center pt-2">
                 <button

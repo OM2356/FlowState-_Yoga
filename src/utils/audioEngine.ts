@@ -150,7 +150,7 @@ class SoundEngine {
     }, 1600);
   }
 
-  // Voice Guidance (Speech Synthesis)
+  // Voice Guidance (Speech Synthesis) in Indian English / Sanskrit yogic pronunciation
   public speakCue(text: string) {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     if (this.isMuted) return;
@@ -158,18 +158,30 @@ class SoundEngine {
     try {
       window.speechSynthesis.cancel(); // Stop any pending speech
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.92; // slightly slower, calm rhythm
-      utterance.pitch = 0.95; // warm, grounded tone
-      utterance.volume = 0.85;
+      utterance.rate = 0.90; // mindful, calm yogic cadence
+      utterance.pitch = 1.0; // warm natural tone
+      utterance.volume = 0.90;
 
       const voices = window.speechSynthesis.getVoices();
-      const preferred = voices.find(
+      
+      // Look first for Indian English / Indic English voices
+      const indianVoice = voices.find(
+        (v) =>
+          (v.lang === "en-IN" || v.lang === "en_IN" || v.lang.startsWith("en-IN") || v.name.toLowerCase().includes("india") || v.name.toLowerCase().includes("hindi") || v.name.includes("Veena") || v.name.includes("Rishi") || v.name.includes("Aditi") || v.name.includes("Kavya"))
+      );
+
+      const naturalEnglishVoice = voices.find(
         (v) =>
           (v.lang.startsWith("en") && (v.name.includes("Natural") || v.name.includes("Serena") || v.name.includes("Samantha") || v.name.includes("Google") || v.name.includes("Karen")))
-      ) || voices[0];
+      );
+
+      const preferred = indianVoice || naturalEnglishVoice || voices[0];
 
       if (preferred) {
         utterance.voice = preferred;
+        if (preferred.lang) {
+          utterance.lang = preferred.lang;
+        }
       }
 
       window.speechSynthesis.speak(utterance);

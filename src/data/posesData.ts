@@ -1375,6 +1375,434 @@ export const YOGA_POSES: YogaPose[] = [
       facing: "floor",
       poseArchetype: "legsUpWall"
     }
+  },
+  {
+    id: "hasta-uttanasana",
+    name: "Raised Arms / Arching Back Pose",
+    sanskritName: "Hasta Uttanasana",
+    englishPronunciation: "HAHS-tuh oo-tahn-AHS-uh-nuh",
+    category: "backbend",
+    difficulty: "beginner",
+    primaryMuscles: ["pectoralisChest", "deltoidsShoulders", "erectorSpinae"],
+    secondaryMuscles: ["quadriceps", "coreAbdominals", "glutes"],
+    benefits: ["spineFlexibility", "energyBoost", "stressRelief"],
+    recommendedHoldSeconds: 30,
+    description: "Classic 2nd and 11th step of Surya Namaskar. Sweeping arms skyward while gently arching the upper thoracic spine to greet the sun and expand cardiovascular lung capacity.",
+    stepByStepInstructions: [
+      "From Mountain Pose, inhale and sweep both arms overhead alongside ears.",
+      "Engage your glutes and draw the lower belly in to protect your lumbar spine.",
+      "Lift from the center of your chest, arching gently through the upper back.",
+      "Keep neck elongated, gazing softly toward your palms or the sky."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale expansively as your heart opens to the sun.",
+      exhaleAction: "Exhale softly while rooting through heels and keeping chest lifted.",
+      holdNotes: "Breathe into the high chest and collarbones."
+    },
+    alignmentCues: [
+      { joint: "Chest & Heart", cue: "Lift straight up before arching backward." },
+      { joint: "Shoulders", cue: "Relaxed away from ears with palms parallel." },
+      { joint: "Lower Back", cue: "Keep tailbone heavy to prevent pinching in lumbar." }
+    ],
+    commonMistakes: [
+      { mistake: "Bending purely from lower back", correction: "Distribute the backbend evenly through the upper thoracic chest." }
+    ],
+    modifications: {
+      beginner: "Keep arms shoulder-width apart without joining palms if shoulders are tight.",
+      advanced: "Deepen the arch while keeping palms pressed in Anjali Mudra overhead.",
+      propUsage: "Hold a yoga block between hands to maintain parallel arm alignment."
+    },
+    kinematics: {
+      headTilt: -25,
+      neckAngle: -15,
+      spineCurve: 0.45,
+      torsoAngle: -20,
+      pelvisTilt: -10,
+      leftShoulderAngle: 175,
+      leftElbowAngle: 0,
+      leftWristAngle: 0,
+      rightShoulderAngle: 175,
+      rightElbowAngle: 0,
+      rightWristAngle: 0,
+      leftHipAngle: -10,
+      leftKneeAngle: 0,
+      leftAnkleAngle: 0,
+      rightHipAngle: -10,
+      rightKneeAngle: 0,
+      rightAnkleAngle: 0,
+      elevationY: 0,
+      symmetry: true,
+      facing: "front",
+      poseArchetype: "tadasana"
+    }
+  },
+  {
+    id: "ashwa-sanchalanasana",
+    name: "Equestrian / Low Lunge Pose",
+    sanskritName: "Ashwa Sanchalanasana",
+    englishPronunciation: "ASH-wah sahn-chah-lahn-AHS-uh-nuh",
+    category: "standing",
+    difficulty: "beginner",
+    primaryMuscles: ["hipFlexors", "quadriceps", "glutes"],
+    secondaryMuscles: ["erectorSpinae", "hamstrings", "pectoralisChest"],
+    benefits: ["hipMobility", "deskPosturedetox", "energyBoost"],
+    recommendedHoldSeconds: 40,
+    description: "4th and 9th step of Surya Namaskar. Releases deep iliopsoas tension from prolonged sitting, stimulates pelvic circulation, and opens the chest.",
+    stepByStepInstructions: [
+      "From standing forward fold, step your right leg far back and lower right knee to the mat.",
+      "Ensure front left knee stacks directly over your left ankle at a 90-degree angle.",
+      "Untuck back toes and press fingertips into the floor on either side of the front foot.",
+      "Roll shoulders back, lift the heart, and gaze softly upward toward the eyebrow center."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale and draw prana upwards from the back hip into your sternum.",
+      exhaleAction: "Exhale and let the pelvis sink gently downward toward the mat.",
+      holdNotes: "Maintain smooth, continuous breaths into the front hip crease."
+    },
+    alignmentCues: [
+      { joint: "Front Knee", cue: "Directly over ankle; never overshooting past the toes." },
+      { joint: "Pelvis", cue: "Square hips forward; sink weight into the back hip flexor." },
+      { joint: "Chest", cue: "Broad and lifted with collarbones open." }
+    ],
+    commonMistakes: [
+      { mistake: "Collapsing torso onto front thigh", correction: "Keep chest buoyant and spine elongated." }
+    ],
+    modifications: {
+      beginner: "Place hands on yoga blocks to elevate the floor.",
+      advanced: "Lift back knee off the floor into High Lunge.",
+      propUsage: "Place a folded blanket beneath the back knee for extra cushioning."
+    },
+    kinematics: {
+      headTilt: -20,
+      neckAngle: -10,
+      spineCurve: 0.25,
+      torsoAngle: -10,
+      pelvisTilt: 15,
+      leftShoulderAngle: 65,
+      leftElbowAngle: 20,
+      leftWristAngle: 0,
+      rightShoulderAngle: 65,
+      rightElbowAngle: 20,
+      rightWristAngle: 0,
+      leftHipAngle: 90,
+      leftKneeAngle: 90,
+      leftAnkleAngle: 0,
+      rightHipAngle: -40,
+      rightKneeAngle: 90,
+      rightAnkleAngle: 20,
+      elevationY: 0.45,
+      symmetry: false,
+      facing: "side",
+      poseArchetype: "warrior1"
+    }
+  },
+  {
+    id: "ashtanga-namaskara",
+    name: "Eight-Limbed Salutation",
+    sanskritName: "Ashtanga Namaskara",
+    englishPronunciation: "ash-TAHN-guh nah-mahs-KAR-uh",
+    category: "seatedRestorative",
+    difficulty: "beginner",
+    primaryMuscles: ["deltoidsShoulders", "erectorSpinae", "latissimusDorsi"],
+    secondaryMuscles: ["coreAbdominals", "pectoralisChest", "calvesAnkles"],
+    benefits: ["spineFlexibility", "energyBoost", "stressRelief"],
+    recommendedHoldSeconds: 30,
+    description: "6th step of Surya Namaskar. Eight points of the body touch the earth simultaneously (feet, knees, hands, chest, chin) in an act of deep reverence, strengthening shoulder stabilizers and upper spine mobility.",
+    stepByStepInstructions: [
+      "From high plank, exhale and lower both knees to the mat.",
+      "Slide the chest and chin forward and down to touch the floor between your hands.",
+      "Keep hips and abdomen slightly elevated off the floor.",
+      "Hug elbows tightly into your ribs and press down evenly through palms and toes."
+    ],
+    breathGuide: {
+      inhaleAction: "Prepare in plank with an inhale.",
+      exhaleAction: "Exhale completely as all 8 points settle upon the earth.",
+      holdNotes: "Pause momentarily in deep surrender before gliding forward into Cobra."
+    },
+    alignmentCues: [
+      { joint: "Elbows", cue: "Hugged close to ribs, pointing straight back toward feet." },
+      { joint: "Hips", cue: "Suspended slightly above the mat with tailbone pointing up." },
+      { joint: "Neck", cue: "Gently elongated with chin resting on the floor." }
+    ],
+    commonMistakes: [
+      { mistake: "Flaring elbows out to the sides", correction: "Keep elbows pinned close against the ribcage." }
+    ],
+    modifications: {
+      beginner: "Rest flat onto the belly into Prone position if chest lowering is difficult.",
+      advanced: "Engage pelvic floor and lift knees 1 inch off floor.",
+      propUsage: "Place a blanket under chest for soft support."
+    },
+    kinematics: {
+      headTilt: -30,
+      neckAngle: -15,
+      spineCurve: 0.35,
+      torsoAngle: 25,
+      pelvisTilt: 20,
+      leftShoulderAngle: 80,
+      leftElbowAngle: 100,
+      leftWristAngle: 90,
+      rightShoulderAngle: 80,
+      rightElbowAngle: 100,
+      rightWristAngle: 90,
+      leftHipAngle: 45,
+      leftKneeAngle: 90,
+      leftAnkleAngle: 90,
+      rightHipAngle: 45,
+      rightKneeAngle: 90,
+      rightAnkleAngle: 90,
+      elevationY: 0.85,
+      symmetry: true,
+      facing: "floor",
+      poseArchetype: "cobra"
+    }
+  },
+  {
+    id: "twisted-lizard",
+    name: "Twisted Lizard Pose (Quad Stretch)",
+    sanskritName: "Parivrtta Utthan Pristhasana",
+    englishPronunciation: "pah-ree-VREE-tah oot-TAHN prees-TAHS-uh-nuh",
+    category: "seatedRestorative",
+    difficulty: "intermediate",
+    primaryMuscles: ["quadriceps", "hipFlexors", "pectoralisChest", "deltoidsShoulders"],
+    secondaryMuscles: ["glutes", "erectorSpinae", "hamstrings", "coreAbdominals"],
+    benefits: ["hipMobility", "deskPosturedetox", "spineFlexibility", "stressRelief"],
+    recommendedHoldSeconds: 45,
+    description: "An exquisite, deep restorative hip opener and quadriceps release as shown in the reference. The front leg anchors in a deep lunge while the back knee rests on the mat with the shin bent upward, grasped by the spiraling arm in a buoyant thoracic spinal twist.",
+    stepByStepInstructions: [
+      "Begin in Low Lunge with your front left foot planted outside your left hand.",
+      "Lower your back right knee softly to the mat or onto a folded blanket.",
+      "Ground your right forearm or palm firmly onto the mat or a yoga block.",
+      "Inhale to rotate your chest and torso open toward the left, spiraling through the thoracic spine.",
+      "Bend your back right knee, bringing the right foot toward your glutes.",
+      "Reach your left hand back to grasp the outer edge of your right foot or ankle.",
+      "Gently draw the heel closer to your glute to deepen the quadriceps and psoas release while gazing softly skyward."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale into the open chest and heart space, creating length through the spine.",
+      exhaleAction: "Exhale and gently surrender hip tension down toward the earth.",
+      holdNotes: "Stay relaxed with smooth diaphragmatic breathing; do not force the foot closer than feels organic."
+    },
+    alignmentCues: [
+      { joint: "Front Knee", cue: "Stacked over or slightly behind front ankle; externally rotated safely." },
+      { joint: "Spine", cue: "Lengthen first before spiraling into the rotation." },
+      { joint: "Back Quad & Knee", cue: "Rest weight above the kneecap onto the lower thigh rather than direct patella pressure." },
+      { joint: "Shoulders", cue: "Broad and open, drawing shoulder blades toward the spine." }
+    ],
+    commonMistakes: [
+      { mistake: "Dumping direct bodyweight onto the kneecap bone", correction: "Slide the back knee further back so the weight rests on the lower quadriceps muscle." },
+      { mistake: "Rounding the upper back while grasping the foot", correction: "Use a yoga strap around the back foot to maintain open collarbones." }
+    ],
+    modifications: {
+      beginner: "Keep the back foot on the floor and simply twist the torso, or loop a strap around the ankle.",
+      advanced: "Lower the grounding forearm flat to the floor and melt the hips deeper toward the mat.",
+      propUsage: "Place a yoga block under the grounding front forearm and a blanket under the back knee."
+    },
+    kinematics: {
+      headTilt: -35,
+      neckAngle: 30,
+      spineCurve: 0.3,
+      torsoAngle: 25,
+      pelvisTilt: 30,
+      leftShoulderAngle: 120,
+      leftElbowAngle: 45,
+      leftWristAngle: 20,
+      rightShoulderAngle: 75,
+      rightElbowAngle: 90,
+      rightWristAngle: 70,
+      leftHipAngle: 90,
+      leftKneeAngle: 85,
+      leftAnkleAngle: 10,
+      rightHipAngle: -35,
+      rightKneeAngle: 115,
+      rightAnkleAngle: 30,
+      elevationY: 0.4,
+      symmetry: false,
+      facing: "side",
+      poseArchetype: "twistedLizard"
+    }
+  },
+  {
+    id: "dancer-pose",
+    name: "Lord of the Dance Pose",
+    sanskritName: "Natarajasana",
+    englishPronunciation: "nah-tah-rah-JAHS-uh-nuh",
+    category: "balance",
+    difficulty: "advanced",
+    primaryMuscles: ["quadriceps", "hipFlexors", "pectoralisChest", "calvesAnkles"],
+    secondaryMuscles: ["glutes", "erectorSpinae", "deltoidsShoulders"],
+    benefits: ["spineFlexibility", "coreStrength", "energyBoost"],
+    recommendedHoldSeconds: 30,
+    description: "An elegant standing balance combining a graceful backbend, deep hip extension, and focused single-point concentration.",
+    stepByStepInstructions: [
+      "Stand tall in Mountain Pose and root firmly into your left standing foot.",
+      "Bend your right knee, bringing your right heel toward your glute.",
+      "Reach back with your right hand and grasp the inside of your right ankle.",
+      "Inhale your left arm forward and upward alongside your ear.",
+      "Exhale and begin kicking your right foot back and up into your hand, hinging forward slightly from the hips.",
+      "Keep chest lifted and gaze steadily at a single point ahead."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale to lengthen the front torso and elevate the reaching fingertips.",
+      exhaleAction: "Exhale and kick strongly into the back hand to open the shoulder and chest.",
+      holdNotes: "Keep breath steady to support vestibular balance."
+    },
+    alignmentCues: [
+      { joint: "Standing Knee", cue: "Micro-bend to avoid locking; quadriceps firmly engaged." },
+      { joint: "Hips", cue: "Squared forward toward the front of the mat." },
+      { joint: "Chest", cue: "Lifted high and proud, counterbalancing the kick." }
+    ],
+    commonMistakes: [
+      { mistake: "Opening the right hip out to the side", correction: "Keep the right inner thigh rolling inward and hips level." }
+    ],
+    modifications: {
+      beginner: "Hold a wall or chair with the forward hand for stability.",
+      advanced: "Reach both hands overhead to grip the back foot in full Natarajasana.",
+      propUsage: "Use a strap looped around the back foot."
+    },
+    kinematics: {
+      headTilt: -15,
+      neckAngle: 0,
+      spineCurve: 0.45,
+      torsoAngle: 30,
+      pelvisTilt: 25,
+      leftShoulderAngle: 170,
+      leftElbowAngle: 0,
+      leftWristAngle: 0,
+      rightShoulderAngle: -60,
+      rightElbowAngle: 60,
+      rightWristAngle: 30,
+      leftHipAngle: 0,
+      leftKneeAngle: 5,
+      leftAnkleAngle: 0,
+      rightHipAngle: -85,
+      rightKneeAngle: 120,
+      rightAnkleAngle: 45,
+      elevationY: 0.1,
+      symmetry: false,
+      facing: "side",
+      poseArchetype: "dancerPose"
+    }
+  },
+  {
+    id: "camel-pose",
+    name: "Camel Pose",
+    sanskritName: "Ustrasana",
+    englishPronunciation: "oosh-TRAHS-uh-nuh",
+    category: "backbend",
+    difficulty: "intermediate",
+    primaryMuscles: ["pectoralisChest", "quadriceps", "hipFlexors", "deltoidsShoulders"],
+    secondaryMuscles: ["erectorSpinae", "glutes", "cervicalNeck"],
+    benefits: ["deskPosturedetox", "spineFlexibility", "energyBoost", "stressRelief"],
+    recommendedHoldSeconds: 30,
+    description: "An expansive kneeling backbend that opens the entire anterior chain, expands the thoracic ribcage, and counteracts rounded posture.",
+    stepByStepInstructions: [
+      "Kneel on the mat with knees hip-width apart and thighs perpendicular to the floor.",
+      "Place hands on your lower back/sacrum with fingers pointing downward.",
+      "Press hips forward, engage glutes, and draw shoulder blades toward each other.",
+      "Inhale to lift the chest toward the sky, arching back through the thoracic spine.",
+      "If comfortable, reach one hand at a time back to grasp your heels.",
+      "Keep neck comfortable, gazing upward or softly back without compressing the cervical spine."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale expansively into the sternum and heart center.",
+      exhaleAction: "Exhale and press hips forward over the knees.",
+      holdNotes: "Maintain open airways with deep, slow breaths."
+    },
+    alignmentCues: [
+      { joint: "Thighs", cue: "Maintained strictly vertical to the floor; do not lean hips back over heels." },
+      { joint: "Chest", cue: "Lift upward first before arching backward." }
+    ],
+    commonMistakes: [
+      { mistake: "Collapsing hips backward toward heels", correction: "Keep pressing the pubic bone forward over knees." }
+    ],
+    modifications: {
+      beginner: "Keep hands supported on sacrum or place blocks next to ankles.",
+      advanced: "Full Camel with hands on soles and tops of feet flat on floor.",
+      propUsage: "Place yoga blocks on their highest height next to each heel."
+    },
+    kinematics: {
+      headTilt: -35,
+      neckAngle: -20,
+      spineCurve: 0.65,
+      torsoAngle: -40,
+      pelvisTilt: -20,
+      leftShoulderAngle: -70,
+      leftElbowAngle: 15,
+      leftWristAngle: 45,
+      rightShoulderAngle: -70,
+      rightElbowAngle: 15,
+      rightWristAngle: 45,
+      leftHipAngle: -20,
+      leftKneeAngle: 90,
+      leftAnkleAngle: 40,
+      rightHipAngle: -20,
+      rightKneeAngle: 90,
+      rightAnkleAngle: 40,
+      elevationY: 0.55,
+      symmetry: true,
+      facing: "side",
+      poseArchetype: "camelPose"
+    }
+  },
+  {
+    id: "wheel-pose",
+    name: "Wheel Pose (Upward Bow)",
+    sanskritName: "Chakrasana / Urdhva Dhanurasana",
+    englishPronunciation: "chak-RAHS-uh-nuh",
+    category: "backbend",
+    difficulty: "advanced",
+    primaryMuscles: ["erectorSpinae", "quadriceps", "deltoidsShoulders", "pectoralisChest"],
+    secondaryMuscles: ["glutes", "latissimusDorsi", "calvesAnkles"],
+    benefits: ["spineFlexibility", "energyBoost", "coreStrength"],
+    recommendedHoldSeconds: 25,
+    description: "The crown jewel of backbends. Builds monumental spinal flexibility, stimulates nervous system vitality, and strengthens the entire posterior kinetic chain.",
+    stepByStepInstructions: [
+      "Lie supine on your back, bend knees, and place feet flat on the mat hip-width apart.",
+      "Bring hands beside your ears with fingers pointing toward your shoulders.",
+      "Press evenly through feet and hands, lifting hips, torso, and head off the floor.",
+      "Straighten arms and legs gradually, pushing the chest toward the wall behind you.",
+      "Relax the neck and breathe deeply into the ribcage."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale to press down through palms and soles, arching the spine.",
+      exhaleAction: "Exhale to relax neck tension and soften inner thighs.",
+      holdNotes: "Maintain smooth diaphragmatic breaths."
+    },
+    alignmentCues: [
+      { joint: "Feet", cue: "Parallel with big toes pointing forward; do not turn feet outward." },
+      { joint: "Elbows", cue: "Hugged inward parallel, not winging out." }
+    ],
+    commonMistakes: [
+      { mistake: "Splaying knees and feet outward", correction: "Keep inner thighs rolling downward and feet parallel." }
+    ],
+    modifications: {
+      beginner: "Practice Bridge Pose or place hands on blocks against a wall.",
+      advanced: "One-legged Wheel Pose (Eka Pada Chakrasana).",
+      propUsage: "Place a yoga strap around thighs to keep knees hip-distance."
+    },
+    kinematics: {
+      headTilt: -45,
+      neckAngle: -30,
+      spineCurve: 0.85,
+      torsoAngle: 0,
+      pelvisTilt: 0,
+      leftShoulderAngle: 170,
+      leftElbowAngle: 20,
+      leftWristAngle: 90,
+      rightShoulderAngle: 170,
+      rightElbowAngle: 20,
+      rightWristAngle: 90,
+      leftHipAngle: -35,
+      leftKneeAngle: 85,
+      leftAnkleAngle: 30,
+      rightHipAngle: -35,
+      rightKneeAngle: 85,
+      rightAnkleAngle: 30,
+      elevationY: 0.5,
+      symmetry: true,
+      facing: "side",
+      poseArchetype: "wheelPose"
+    }
   }
 ];
 

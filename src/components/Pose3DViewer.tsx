@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { YogaPose } from "../types";
 import { HumanYogaAvatar } from "./HumanYogaAvatar";
+import { ThreeYogaHuman } from "./ThreeYogaHuman";
 import { MUSCLE_GROUPS_INFO } from "../data/posesData";
 import { audioEngine } from "../utils/audioEngine";
 import { 
@@ -15,7 +16,9 @@ import {
   Compass, 
   Plus, 
   Play, 
-  HelpCircle 
+  HelpCircle,
+  Rotate3d,
+  Layers
 } from "lucide-react";
 
 interface Pose3DViewerProps {
@@ -32,6 +35,7 @@ export const Pose3DViewer: React.FC<Pose3DViewerProps> = ({
   onAddToCustomFlow,
 }) => {
   const [activeTab, setActiveTab] = useState<"overview" | "anatomy" | "alignment" | "modifications">("overview");
+  const [viewMode, setViewMode] = useState<"threejs-3d" | "vector-2d">("threejs-3d");
   const [depth, setDepth] = useState<number>(0.5);
   const [isPlayingAudioCue, setIsPlayingAudioCue] = useState<boolean>(false);
 
@@ -47,7 +51,7 @@ export const Pose3DViewer: React.FC<Pose3DViewerProps> = ({
 
   return (
     <div id="pose-viewer-modal" className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-[#181B18]/65 backdrop-blur-xs animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl max-h-[90vh] bg-[#FBF9F5] rounded-2xl border border-[#E2DAD0] shadow-2xl overflow-hidden flex flex-col">
+      <div className="relative w-full max-w-5xl max-h-[92vh] bg-[#FBF9F5] rounded-3xl border border-[#E2DAD0] shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b border-[#E8E0D2] flex items-center justify-between bg-[#F5EFEB]/70">
           <div>
@@ -66,6 +70,28 @@ export const Pose3DViewer: React.FC<Pose3DViewerProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {/* 3D Mode Toggle */}
+            <div className="flex items-center bg-[#E5DDD0] p-0.5 rounded-xl text-xs">
+              <button
+                onClick={() => setActiveTab("overview")}
+                className={`px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1 ${
+                  activeTab !== "anatomy" ? "bg-[#5A6D56] text-white shadow-xs" : "text-[#4A5A4E] hover:text-[#1E231F]"
+                }`}
+              >
+                <Rotate3d className="w-3.5 h-3.5" />
+                <span>3D Skin</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("anatomy")}
+                className={`px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1 ${
+                  activeTab === "anatomy" ? "bg-[#5A6D56] text-white shadow-xs" : "text-[#4A5A4E] hover:text-[#1E231F]"
+                }`}
+              >
+                <Activity className="w-3.5 h-3.5" />
+                <span>3D Heatmap</span>
+              </button>
+            </div>
+
             <button
               id="btn-listen-pose-cue"
               onClick={handlePlayVoiceCue}
@@ -90,14 +116,16 @@ export const Pose3DViewer: React.FC<Pose3DViewerProps> = ({
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Column: Realistic Human Figure Visualizer */}
           <div className="lg:col-span-6 flex flex-col gap-3">
-            <HumanYogaAvatar
-              pose={pose}
-              depthLevel={depth}
-              showMuscleHeatmap={activeTab === "anatomy"}
-              showAlignmentGuides={activeTab === "alignment"}
-              interactiveControls={true}
-              size="lg"
-            />
+            <div className="w-full h-[380px] rounded-2xl overflow-hidden border border-[#DDD4C4] bg-[#F7F4EE] shadow-xs">
+              <ThreeYogaHuman
+                pose={pose}
+                height={380}
+                depthLevel={depth}
+                showMuscleHeatmap={activeTab === "anatomy"}
+                materialMode={activeTab === "anatomy" ? "heatmap" : "skin"}
+                interactiveControls={true}
+              />
+            </div>
 
             {/* Action Buttons underneath avatar */}
             <div className="flex items-center gap-2 mt-1">
