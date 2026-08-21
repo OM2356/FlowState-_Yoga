@@ -394,8 +394,8 @@ async function startServer() {
   // AUTHENTICATION & SECURITY ENDPOINTS (JWT + BCRYPT)
   // ----------------------------------------------------
 
-  // Register New User
-  app.post("/api/auth/register", async (req, res) => {
+  // Register New User (supports both /api/auth/register and /api/register)
+  app.post(["/api/auth/register", "/api/register"], async (req, res) => {
     try {
       const ip = req.ip || req.socket.remoteAddress;
       const { name, email, password, level, mindfulMinutesGoal, role } = req.body;
@@ -456,8 +456,8 @@ async function startServer() {
     }
   });
 
-  // Login User (with rate limiting & bcrypt verification)
-  app.post("/api/auth/login", async (req, res) => {
+  // Login User (supports both /api/auth/login and /api/login)
+  app.post(["/api/auth/login", "/api/login"], async (req, res) => {
     try {
       const ip = req.ip || req.socket.remoteAddress;
       const { email, password } = req.body;
