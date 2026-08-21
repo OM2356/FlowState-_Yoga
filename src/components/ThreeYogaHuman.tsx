@@ -22,6 +22,32 @@ import {
   X
 } from "lucide-react";
 
+export interface CustomJointAngles {
+  spineFlex?: number;     // -90 to +90 deg (forward / back bend)
+  spineTwist?: number;    // -60 to +60 deg
+  torsoTilt?: number;     // -45 to +45 deg lateral
+  pelvisY?: number;       // 0.2 to 1.3 meters
+  pelvisTilt?: number;    // -90 to +90 deg
+  headPitch?: number;     // -45 to +45 deg
+  headYaw?: number;       // -90 to +90 deg
+  leftArmPitch?: number;  // -180 to +180 deg
+  leftArmYaw?: number;    // -90 to +90 deg
+  leftArmRoll?: number;   // -90 to +90 deg
+  leftElbowFlex?: number; // 0 to 150 deg
+  rightArmPitch?: number; // -180 to +180 deg
+  rightArmYaw?: number;   // -90 to +90 deg
+  rightArmRoll?: number;  // -90 to +90 deg
+  rightElbowFlex?: number;// 0 to 150 deg
+  leftHipFlex?: number;   // -90 to +120 deg
+  leftHipYaw?: number;    // -45 to +90 deg (turnout)
+  leftHipRoll?: number;   // -45 to +45 deg (abduction)
+  leftKneeFlex?: number;  // 0 to 150 deg
+  rightHipFlex?: number;  // -90 to +120 deg
+  rightHipYaw?: number;   // -45 to +90 deg
+  rightHipRoll?: number;  // -45 to +45 deg
+  rightKneeFlex?: number; // 0 to 150 deg
+}
+
 interface ThreeYogaHumanProps {
   pose?: YogaPose | null;
   suryaStep?: SuryaNamaskarStep | null;
@@ -36,6 +62,7 @@ interface ThreeYogaHumanProps {
   skinTone?: "golden-tan" | "deep-bronze" | "warm-sand" | "olive-radiance";
   shortsColor?: "slate-black" | "forest-sage" | "terracotta" | "ocean-navy";
   topStyle?: "bare-torso" | "fitted-tank";
+  customJointAngles?: CustomJointAngles | null;
   onPoseChangeAnimationEnd?: () => void;
 }
 
@@ -53,6 +80,7 @@ export const ThreeYogaHuman: React.FC<ThreeYogaHumanProps> = ({
   skinTone: propSkinTone = "golden-tan",
   shortsColor: propShortsColor = "slate-black",
   topStyle: propTopStyle = "bare-torso",
+  customJointAngles = null,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -726,6 +754,60 @@ export const ThreeYogaHuman: React.FC<ThreeYogaHumanProps> = ({
 
     const degToRad = (deg: number) => (deg * Math.PI) / 180;
 
+    // 0: Check if Custom Joint Angles are explicitly provided (Interactive Pose Studio / Custom Rig)
+    if (customJointAngles) {
+      const c = customJointAngles;
+      const pY = c.pelvisY !== undefined ? c.pelvisY : 1.05;
+      targetPositions.pelvis.set(0, pY, 0);
+      targetLookAt.set(0, Math.max(0.4, pY * 0.9), 0);
+
+      targetRotations.pelvis.set(
+        degToRad(c.pelvisTilt || 0),
+        degToRad(c.spineTwist ? c.spineTwist * 0.3 : 0),
+        degToRad(c.torsoTilt ? c.torsoTilt * 0.3 : 0)
+      );
+      targetRotations.spine.set(
+        degToRad(c.spineFlex ? c.spineFlex * 0.6 : 0),
+        degToRad(c.spineTwist ? c.spineTwist * 0.5 : 0),
+        degToRad(c.torsoTilt ? c.torsoTilt * 0.4 : 0)
+      );
+      targetRotations.chest.set(
+        degToRad(c.spineFlex ? c.spineFlex * 0.4 : 0),
+        degToRad(c.spineTwist ? c.spineTwist * 0.2 : 0),
+        degToRad(c.torsoTilt ? c.torsoTilt * 0.3 : 0)
+      );
+      targetRotations.head.set(degToRad(c.headPitch || 0), degToRad(c.headYaw || 0), 0);
+
+      targetRotations.leftArm.set(
+        degToRad(-(c.leftArmPitch || 0)),
+        degToRad(c.leftArmYaw || 0),
+        degToRad(c.leftArmRoll || 12)
+      );
+      targetRotations.leftForearm.set(degToRad(-(c.leftElbowFlex || 0)), 0, 0);
+
+      targetRotations.rightArm.set(
+        degToRad(-(c.rightArmPitch || 0)),
+        degToRad(c.rightArmYaw || 0),
+        degToRad(-(c.rightArmRoll || 12))
+      );
+      targetRotations.rightForearm.set(degToRad(-(c.rightElbowFlex || 0)), 0, 0);
+
+      targetRotations.leftLeg.set(
+        degToRad(c.leftHipFlex || 0),
+        degToRad(c.leftHipYaw || 0),
+        degToRad(c.leftHipRoll || -2)
+      );
+      targetRotations.leftShin.set(degToRad(c.leftKneeFlex || 0), 0, 0);
+
+      targetRotations.rightLeg.set(
+        degToRad(c.rightHipFlex || 0),
+        degToRad(c.rightHipYaw || 0),
+        degToRad(c.rightHipRoll || 2)
+      );
+      targetRotations.rightShin.set(degToRad(c.rightKneeFlex || 0), 0, 0);
+      return;
+    }
+
     // A: Check if Surya Namaskar Step with explicit 3D Kinematics is active
     if (suryaStep) {
       const k = suryaStep.kinematics3D;
@@ -1276,6 +1358,7 @@ export const ThreeYogaHuman: React.FC<ThreeYogaHumanProps> = ({
           targetRotations.rightShin.set(degToRad(125), 0, 0);
           break;
 
+        case "camel":
         case "camelPose":
           // Kneeling Ustrasana Backbend
           targetPositions.pelvis.set(0, 0.58, 0);
@@ -1417,7 +1500,7 @@ export const ThreeYogaHuman: React.FC<ThreeYogaHumanProps> = ({
           break;
       }
     }
-  }, [pose, suryaStep, activeDepth]);
+  }, [pose, suryaStep, activeDepth, customJointAngles]);
 
   // Handle Preset Camera Angles
   const setCameraAngle = (view: "threeQuarter" | "side" | "front" | "top") => {

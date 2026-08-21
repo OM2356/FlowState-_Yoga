@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { FlowSequence, YogaPose, PracticeSessionRecord, UserProfile } from "./types";
+import { FlowSequence, YogaPose, PracticeSessionRecord, UserProfile, UserMasteryState, MasteryBadge } from "./types";
 import { PRESET_FLOWS } from "./data/presetFlows";
 import { YOGA_POSES } from "./data/posesData";
+import { 
+  getInitialMasteryState, 
+  evaluateAndUnlockBadges, 
+  MASTERY_BADGES, 
+  getXpRankInfo
+} from "./data/masteryBadges";
+import { audioEngine } from "./utils/audioEngine";
 import { InstantFlowGenerator } from "./components/InstantFlowGenerator";
 import { MoodSessionSelector } from "./components/MoodSessionSelector";
 import { SequenceExplorer } from "./components/SequenceExplorer";
@@ -14,7 +21,6 @@ import { BreathworkStudio } from "./components/BreathworkStudio";
 import { BodyTensionMap } from "./components/BodyTensionMap";
 import { BeginnerGuide } from "./components/BeginnerGuide";
 import { UserProfileDashboard } from "./components/UserProfileDashboard";
-import { DeveloperPortal } from "./components/DeveloperPortal";
 import { UserFeedbackModal } from "./components/UserFeedbackModal";
 import { AuthModal } from "./components/AuthModal";
 import { AuthLandingPage } from "./components/AuthLandingPage";
@@ -42,16 +48,35 @@ import {
   Calendar,
   Sun,
   User,
-  Terminal,
   MessageSquarePlus,
   LogOut,
-  ShieldAlert,
-  Rotate3d
+  Rotate3d,
+  Trophy,
+  Shield,
+  X
 } from "lucide-react";
+
+const getToastBadgeIcon = (iconName: string, className = "w-6 h-6 text-white") => {
+  switch (iconName) {
+    case "Shield": return <Shield className={className} />;
+    case "Sparkles": return <Sparkles className={className} />;
+    case "Compass": return <Compass className={className} />;
+    case "Heart": return <Heart className={className} />;
+    case "Flame": return <Flame className={className} />;
+    case "Layers": return <Layers className={className} />;
+    case "Play": return <Play className={className} />;
+    case "Award": return <Award className={className} />;
+    case "BookOpen": return <BookOpen className={className} />;
+    case "Wind": return <Wind className={className} />;
+    case "Rotate3d": return <Rotate3d className={className} />;
+    case "ShieldCheck": return <ShieldCheck className={className} />;
+    default: return <Trophy className={className} />;
+  }
+};
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<
-    "mood" | "studio3d" | "surya" | "instant" | "tension" | "sequences" | "poses" | "breathwork" | "coach" | "guide" | "profile" | "developer"
+    "mood" | "studio3d" | "surya" | "instant" | "tension" | "sequences" | "poses" | "breathwork" | "coach" | "guide" | "profile"
   >("mood");
   
   // Active modals & live practice states
@@ -70,18 +95,6 @@ export default function App() {
       return null;
     }
   });
-
-  // Check if current user is authorized developer (Strictly omkarsathe3103@gmail.com)
-  const isCurrentUserDeveloper = Boolean(
-    currentUser?.email && currentUser.email.toLowerCase().trim() === "omkarsathe3103@gmail.com"
-  );
-
-  // If unauthorized user lands on developer tab, redirect to mood
-  useEffect(() => {
-    if (activeTab === "developer" && !isCurrentUserDeveloper) {
-      setActiveTab("mood");
-    }
-  }, [activeTab, isCurrentUserDeveloper]);
 
   const handleLogout = () => {
     try {
@@ -102,6 +115,17 @@ export default function App() {
     }
   });
 
+  // User Gamified Mastery State
+  const [masteryState, setMasteryState] = useState<UserMasteryState>(() => {
+    return getInitialMasteryState();
+  });
+
+  // Transient notification for newly unlocked badges
+  const [unlockedToast, setUnlockedToast] = useState<{
+    badge: MasteryBadge;
+    title: string;
+  } | null>(null);
+
   // Fetch remote session history if logged in
   useEffect(() => {
     if (currentUser?.id) {
@@ -120,6 +144,76 @@ export default function App() {
         .catch(() => {});
     }
   }, [currentUser]);
+
+  // Track 3D pose inspections for Biomechanics mastery
+  const handleInspectPose = (pose: YogaPose) => {
+    setInspectedPose(pose);
+    setMasteryState((prev) => {
+      const alreadyInspected = prev.inspected3dPoseIds.includes(pose.id);
+      if (alreadyInspected) return prev;
+      const updatedInspected = [...prev.inspected3dPoseIds, pose.id];
+      const nextState: UserMasteryState = {
+        ...prev,
+        inspected3dPoseIds: updatedInspected,
+      };
+      const { updatedState, newlyUnlockedBadges } = evaluateAndUnlockBadges(nextState, sessionHistory, currentUser);
+      if (newlyUnlockedBadges.length > 0) {
+        audioEngine.playSingingBowl(528); // Solfeggio 528Hz Miracle frequency
+        setUnlockedToast({
+          badge: newlyUnlockedBadges[0],
+          title: newlyUnlockedBadges[0].title,
+        });
+      }
+      return updatedState;
+    });
+  };
+
+  // Helper to log pose hold mastery directly from library or studio
+  const handleLogPoseMastery = (poseId: string, holdSeconds = 30) => {
+    audioEngine.playSingingBowl(440);
+    setMasteryState((prev) => {
+      const existing = prev.posesCompleted[poseId] || {
+        poseId,
+        completedCount: 0,
+        totalHoldSeconds: 0,
+        lastCompletedAt: new Date().toISOString(),
+        masteryTier: 1,
+      };
+
+      const newCount = existing.completedCount + 1;
+      const newHold = existing.totalHoldSeconds + holdSeconds;
+      const newTier = newCount >= 5 ? 3 : newCount >= 3 ? 2 : 1;
+
+      const nextPosesCompleted = {
+        ...prev.posesCompleted,
+        [poseId]: {
+          ...existing,
+          completedCount: newCount,
+          totalHoldSeconds: newHold,
+          lastCompletedAt: new Date().toISOString(),
+          masteryTier: newTier as 1 | 2 | 3,
+        },
+      };
+
+      const nextState: UserMasteryState = {
+        ...prev,
+        posesCompleted: nextPosesCompleted,
+        lastUpdated: new Date().toISOString(),
+      };
+
+      const { updatedState, newlyUnlockedBadges } = evaluateAndUnlockBadges(nextState, sessionHistory, currentUser);
+
+      if (newlyUnlockedBadges.length > 0) {
+        audioEngine.playSingingBowl(587.33); // D5 celebration chime
+        setUnlockedToast({
+          badge: newlyUnlockedBadges[0],
+          title: newlyUnlockedBadges[0].title,
+        });
+      }
+
+      return updatedState;
+    });
+  };
 
   // Pose of the Day (rotates based on day of month)
   const dayOfMonth = new Date().getDate();
@@ -167,15 +261,58 @@ export default function App() {
     } catch {}
   };
 
-  // Sync completed session with local storage AND backend storage
+  // Sync completed session with local storage AND backend storage, and advance Mastery
   const handleSessionComplete = async (record: PracticeSessionRecord) => {
-    setSessionHistory((prev) => {
-      const updated = [record, ...prev];
-      try {
-        localStorage.setItem("flowstate_history", JSON.stringify(updated));
-      } catch {}
-      return updated;
-    });
+    const updatedHistory = [record, ...sessionHistory];
+    setSessionHistory(updatedHistory);
+    try {
+      localStorage.setItem("flowstate_history", JSON.stringify(updatedHistory));
+    } catch {}
+
+    // Advance user mastery progress for all poses included in this flow
+    if (activePracticeFlow?.poses) {
+      setMasteryState((prev) => {
+        const nextPoses = { ...prev.posesCompleted };
+
+        activePracticeFlow.poses.forEach((p) => {
+          const existing = nextPoses[p.poseId] || {
+            poseId: p.poseId,
+            completedCount: 0,
+            totalHoldSeconds: 0,
+            lastCompletedAt: new Date().toISOString(),
+            masteryTier: 1,
+          };
+          const count = existing.completedCount + 1;
+          const hold = existing.totalHoldSeconds + p.durationSeconds;
+          nextPoses[p.poseId] = {
+            ...existing,
+            completedCount: count,
+            totalHoldSeconds: hold,
+            lastCompletedAt: new Date().toISOString(),
+            masteryTier: (count >= 5 ? 3 : count >= 3 ? 2 : 1) as 1 | 2 | 3,
+          };
+        });
+
+        const nextState: UserMasteryState = {
+          ...prev,
+          posesCompleted: nextPoses,
+          totalFlowMinutes: prev.totalFlowMinutes + record.durationMinutes,
+          lastUpdated: new Date().toISOString(),
+        };
+
+        const { updatedState, newlyUnlockedBadges } = evaluateAndUnlockBadges(nextState, updatedHistory, currentUser);
+
+        if (newlyUnlockedBadges.length > 0) {
+          audioEngine.playSingingBowl(528);
+          setUnlockedToast({
+            badge: newlyUnlockedBadges[0],
+            title: newlyUnlockedBadges[0].title,
+          });
+        }
+
+        return updatedState;
+      });
+    }
 
     // Sync to backend DB for developer-side visibility
     try {
@@ -211,7 +348,7 @@ export default function App() {
     );
   }
 
-  // Defined navigation tabs - Dev Portal is ONLY included for the developer
+  // Defined navigation tabs
   const navTabs = [
     { id: "mood", label: "Mood Flow", icon: Smile },
     { id: "studio3d", label: "3D Studio", icon: Rotate3d, isSpecial: true },
@@ -224,9 +361,6 @@ export default function App() {
     { id: "coach", label: "AI Coach", icon: Bot },
     { id: "guide", label: "Guide", icon: ShieldCheck },
     { id: "profile", label: "My Profile", icon: User },
-    ...(isCurrentUserDeveloper
-      ? [{ id: "developer", label: "Dev Portal", icon: Terminal, isDev: true }]
-      : []),
   ];
 
   return (
@@ -255,12 +389,11 @@ export default function App() {
             </div>
           </div>
 
-          {/* Desktop Navigation Links (Developer portal only rendered for omkarsathe3103@gmail.com / developer) */}
+          {/* Desktop Navigation Links */}
           <nav className="hidden xl:flex items-center gap-1 bg-[#ECE4D6] p-1.5 rounded-2xl border border-[#DDD3C2]">
             {navTabs.map((tab) => {
               const Icon = tab.icon;
               const isSelected = activeTab === tab.id;
-              const isDevTab = (tab as any).isDev;
               return (
                 <button
                   key={tab.id}
@@ -268,15 +401,11 @@ export default function App() {
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
                     isSelected
-                      ? isDevTab
-                        ? "bg-[#1E2520] text-[#8BBA85] shadow-xs"
-                        : "bg-[#FAF8F4] text-[#1A221C] shadow-xs"
-                      : isDevTab
-                      ? "text-[#4A5D4E] hover:text-[#1E2520] hover:bg-[#DDD3C2]"
+                      ? "bg-[#FAF8F4] text-[#1A221C] shadow-xs"
                       : "text-[#546457] hover:text-[#1A221C] hover:bg-[#E2D8C8]/60"
                   }`}
                 >
-                  <Icon className={`w-3.5 h-3.5 ${isSelected ? (isDevTab ? "text-[#8BBA85]" : "text-[#4E6548]") : "text-[#738275]"}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isSelected ? "text-[#4E6548]" : "text-[#738275]"}`} />
                   <span>{tab.label}</span>
                 </button>
               );
@@ -306,11 +435,6 @@ export default function App() {
               <span className="hidden sm:inline">
                 {currentUser.name.split(" ")[0]}
               </span>
-              {isCurrentUserDeveloper && (
-                <span className="text-[10px] bg-[#1E2520] text-[#8BBA85] font-bold px-1.5 py-0.2 rounded-md">
-                  DEV
-                </span>
-              )}
             </button>
 
             {/* Log Out Button */}
@@ -335,21 +459,18 @@ export default function App() {
           </div>
         </div>
 
-        {/* Mobile / Tablet Horizontal Navigation Strip (Dev Portal only included for developer) */}
+        {/* Mobile / Tablet Horizontal Navigation Strip */}
         <div className="xl:hidden flex items-center gap-1.5 overflow-x-auto pt-3 pb-1 no-scrollbar">
           {navTabs.map((tab) => {
             const Icon = tab.icon;
             const isSelected = activeTab === tab.id;
-            const isDevTab = (tab as any).isDev;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap flex items-center gap-1.5 border transition-all cursor-pointer ${
                   isSelected
-                    ? isDevTab
-                      ? "bg-[#1E2520] text-[#8BBA85] border-[#1E2520] shadow-xs"
-                      : "bg-[#4E6548] text-white border-[#4E6548] shadow-xs"
+                    ? "bg-[#4E6548] text-white border-[#4E6548] shadow-xs"
                     : "bg-[#EFE8DC] text-[#425044] border-[#DFD6C7]"
                 }`}
               >
@@ -460,15 +581,18 @@ export default function App() {
         {activeTab === "sequences" && (
           <SequenceExplorer
             onStartFlow={handleStartFlow}
-            onInspectPose={(pose) => setInspectedPose(pose)}
+            onInspectPose={handleInspectPose}
             onOpenCustomBuilder={() => setIsBuilderOpen(true)}
           />
         )}
 
         {activeTab === "poses" && (
           <PoseLibrary
-            onSelectPose={(pose) => setInspectedPose(pose)}
+            masteryState={masteryState}
+            onSelectPose={handleInspectPose}
             onPracticePose={handlePracticeSinglePose}
+            onLogPoseMastery={handleLogPoseMastery}
+            onOpenProfileMastery={() => setActiveTab("profile")}
           />
         )}
 
@@ -476,7 +600,7 @@ export default function App() {
 
         {activeTab === "coach" && (
           <AICoachChat
-            onInspectPose={(pose) => setInspectedPose(pose)}
+            onInspectPose={handleInspectPose}
             onPracticePose={handlePracticeSinglePose}
           />
         )}
@@ -487,33 +611,21 @@ export default function App() {
           <UserProfileDashboard
             user={currentUser}
             sessionHistory={sessionHistory}
+            masteryState={masteryState}
+            onUpdateMasteryState={(ns) => {
+              setMasteryState(ns);
+              try {
+                localStorage.setItem("flowstate_mastery_state", JSON.stringify(ns));
+              } catch {}
+            }}
+            onNavigateToPoseLibrary={(filter) => {
+              setActiveTab("poses");
+            }}
+            onStartPracticePose={handlePracticeSinglePose}
             onOpenAuth={() => setIsAuthOpen(true)}
             onStartFlow={handleStartFlow}
             onOpenFeedback={() => setIsFeedbackOpen(true)}
-            onOpenDeveloperPortal={() => setActiveTab("developer")}
           />
-        )}
-
-        {activeTab === "developer" && (
-          isCurrentUserDeveloper ? (
-            <DeveloperPortal currentUser={currentUser} />
-          ) : (
-            <div className="max-w-xl mx-auto my-12 p-8 bg-[#FAF7F2] rounded-3xl border border-[#E2DAD0] text-center space-y-4">
-              <div className="w-12 h-12 rounded-2xl bg-[#C1664C]/15 text-[#C1664C] flex items-center justify-center mx-auto">
-                <ShieldAlert className="w-6 h-6" />
-              </div>
-              <h2 className="text-xl font-serif font-medium text-[#1A221C]">Restricted Access Area</h2>
-              <p className="text-xs text-[#5D6B60]">
-                The Developer Portal is exclusively accessible to the authorized developer account (omkarsathe3103@gmail.com).
-              </p>
-              <button
-                onClick={() => setActiveTab("mood")}
-                className="px-4 py-2 rounded-xl bg-[#4E6548] text-white text-xs font-semibold"
-              >
-                Return to Studio
-              </button>
-            </div>
-          )
         )}
       </main>
 
@@ -530,23 +642,56 @@ export default function App() {
               onClick={() => setIsFeedbackOpen(true)}
               className="text-xs text-[#4E6548] hover:underline font-semibold cursor-pointer"
             >
-              Report an Issue
+              Report an Issue / Feedback
             </button>
-            {isCurrentUserDeveloper && (
-              <>
-                <span>•</span>
-                <button
-                  onClick={() => setActiveTab("developer")}
-                  className="text-xs text-[#1E2520] hover:underline font-semibold cursor-pointer flex items-center gap-1"
-                >
-                  <Terminal className="w-3 h-3 text-[#8BBA85]" />
-                  <span>Developer Portal</span>
-                </button>
-              </>
-            )}
           </div>
         </div>
       </footer>
+
+      {/* Gamified Badge Unlock Floating Toast Notification */}
+      {unlockedToast && (
+        <div
+          id="badge-unlocked-toast"
+          className="fixed bottom-6 right-6 z-50 max-w-sm w-full bg-[#1F2621] text-[#F9F7F2] p-4 rounded-2xl border border-[#4E6548] shadow-2xl animate-in slide-in-from-bottom-5 duration-300 flex items-start gap-3.5"
+        >
+          <div className="w-11 h-11 rounded-xl bg-[#4E6548] text-white flex items-center justify-center shrink-0 shadow-xs">
+            {getToastBadgeIcon(unlockedToast.badge.iconName, "w-6 h-6 text-white")}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between gap-1">
+              <span className="text-[10px] uppercase font-bold tracking-wider text-[#98C493] bg-[#4E6548]/30 px-2 py-0.5 rounded-md">
+                Badge Unlocked!
+              </span>
+              <button
+                onClick={() => setUnlockedToast(null)}
+                className="text-[#96A699] hover:text-white p-1 rounded-md cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <h4 className="font-serif font-bold text-sm text-[#F7F4EE] mt-1">
+              {unlockedToast.badge.title}
+            </h4>
+            <p className="text-xs text-[#B4C2B6] mt-0.5 leading-snug">
+              {unlockedToast.badge.description}
+            </p>
+            <div className="flex items-center gap-2 mt-2 pt-2 border-t border-[#344036]">
+              <span className="text-[10px] font-mono text-[#D8E6D6] font-semibold">
+                +{unlockedToast.badge.xpReward} Mastery XP
+              </span>
+              <button
+                onClick={() => {
+                  setUnlockedToast(null);
+                  setActiveTab("profile");
+                }}
+                className="text-[11px] font-semibold text-[#98C493] hover:underline ml-auto cursor-pointer"
+              >
+                View Mastery Profile &rarr;
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Fullscreen Live Practice Studio Player */}
       {activePracticeFlow && (
@@ -561,8 +706,10 @@ export default function App() {
       {inspectedPose && (
         <Pose3DViewer
           pose={inspectedPose}
+          masteryState={masteryState}
           onClose={() => setInspectedPose(null)}
           onStartSinglePosePractice={handlePracticeSinglePose}
+          onLogPoseMastery={handleLogPoseMastery}
         />
       )}
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { YogaPose } from "../types";
+import { YogaPose, UserMasteryState } from "../types";
 import { HumanYogaAvatar } from "./HumanYogaAvatar";
 import { ThreeYogaHuman } from "./ThreeYogaHuman";
 import { MUSCLE_GROUPS_INFO } from "../data/posesData";
@@ -18,26 +18,37 @@ import {
   Play, 
   HelpCircle,
   Rotate3d,
-  Layers
+  Layers,
+  Trophy,
+  Star,
+  Award
 } from "lucide-react";
 
 interface Pose3DViewerProps {
   pose: YogaPose;
+  masteryState?: UserMasteryState;
   onClose: () => void;
   onStartSinglePosePractice?: (pose: YogaPose) => void;
   onAddToCustomFlow?: (pose: YogaPose) => void;
+  onLogPoseMastery?: (poseId: string, holdSeconds?: number) => void;
 }
 
 export const Pose3DViewer: React.FC<Pose3DViewerProps> = ({
   pose,
+  masteryState,
   onClose,
   onStartSinglePosePractice,
   onAddToCustomFlow,
+  onLogPoseMastery,
 }) => {
   const [activeTab, setActiveTab] = useState<"overview" | "anatomy" | "alignment" | "modifications">("overview");
   const [viewMode, setViewMode] = useState<"threejs-3d" | "vector-2d">("threejs-3d");
   const [depth, setDepth] = useState<number>(0.5);
   const [isPlayingAudioCue, setIsPlayingAudioCue] = useState<boolean>(false);
+
+  const poseRecord = masteryState?.posesCompleted[pose.id];
+  const completedCount = poseRecord?.completedCount || 0;
+  const totalHoldSeconds = poseRecord?.totalHoldSeconds || 0;
 
   const handlePlayVoiceCue = () => {
     setIsPlayingAudioCue(true);

@@ -18,7 +18,6 @@ import {
   Edit2, 
   Calendar, 
   Layers,
-  Terminal,
   Key
 } from "lucide-react";
 
@@ -141,18 +140,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  // Quick fill developer account
-  const handleQuickFillOmkar = () => {
+  const handleQuickFillDemo = () => {
     setMode("login");
-    setEmail("omkarsathe3103@gmail.com");
-    setPassword("flowstate2026");
+    setEmail("demo@flowstate.com");
+    setPassword("FlowState@123");
     setError(null);
   };
 
-  const handleQuickFillDev = () => {
+  const handleQuickFillAdmin = () => {
     setMode("login");
-    setEmail("dev@flowstate.internal");
-    setPassword("DeveloperPass123!");
+    setEmail("admin@flowstate.com");
+    setPassword("Admin@FlowState123");
     setError(null);
   };
 
@@ -374,27 +372,53 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               </button>
 
               {/* Quick Fill Credentials helpers */}
-              <div className="pt-2 border-t border-[#EAE0D4] space-y-2">
-                <span className="text-[11px] font-semibold text-[#667768] block text-center">
-                  Quick Demo / Backend Testing Logins:
-                </span>
-                <div className="flex flex-wrap items-center gap-2">
+              <div className="pt-3 border-t border-[#EAE0D4] space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-semibold text-[#5A6D56] uppercase tracking-wider block">
+                    Sample Test Accounts (1-Click Fill)
+                  </span>
+                  <span className="text-[10px] text-[#869688]">Tap button to auto-fill</span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
-                    onClick={handleQuickFillOmkar}
-                    className="flex-1 py-1.5 px-2 rounded-xl bg-[#1E2520] hover:bg-[#2F3A31] text-[#8BBA85] text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                    onClick={handleQuickFillDemo}
+                    className="py-2 px-2 rounded-xl bg-[#EBE2D4] hover:bg-[#DDD2BF] text-[#2C382F] text-[11px] font-semibold flex flex-col items-center justify-center gap-0.5 transition-colors cursor-pointer border border-[#DDD0BC]"
                   >
-                    <Terminal className="w-3 h-3" />
-                    <span>Omkar (Dev)</span>
+                    <User className="w-3.5 h-3.5 text-[#4E6548]" />
+                    <span>Demo Yogi</span>
                   </button>
+
+                  <button
+                    type="button"
+                    onClick={handleQuickFillAdmin}
+                    className="py-2 px-2 rounded-xl bg-[#EBE2D4] hover:bg-[#DDD2BF] text-[#2C382F] text-[11px] font-semibold flex flex-col items-center justify-center gap-0.5 transition-colors cursor-pointer border border-[#DDD0BC]"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#8A5A3C]" />
+                    <span>Admin</span>
+                  </button>
+
                   <button
                     type="button"
                     onClick={handleQuickFillMember}
-                    className="flex-1 py-1.5 px-2 rounded-xl bg-[#EBE2D4] hover:bg-[#DDD2BF] text-[#2C382F] text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors cursor-pointer"
+                    className="py-2 px-2 rounded-xl bg-[#EBE2D4] hover:bg-[#DDD2BF] text-[#2C382F] text-[11px] font-semibold flex flex-col items-center justify-center gap-0.5 transition-colors cursor-pointer border border-[#DDD0BC]"
                   >
-                    <User className="w-3 h-3 text-[#4E6548]" />
-                    <span>Elena (Member)</span>
+                    <Sparkles className="w-3.5 h-3.5 text-[#C1664C]" />
+                    <span>Elena</span>
                   </button>
+                </div>
+
+                {/* Sample credentials summary table */}
+                <div className="p-2.5 rounded-xl bg-[#F0E9DC] border border-[#DDD2BF] text-[11px] text-[#4A5A4D] space-y-1">
+                  <div className="flex items-center justify-between font-mono text-[10px]">
+                    <span className="font-semibold text-[#1A221C]">Demo User:</span>
+                    <span>demo@flowstate.com / FlowState@123</span>
+                  </div>
+                  <div className="flex items-center justify-between font-mono text-[10px]">
+                    <span className="font-semibold text-[#1A221C]">Elena (Member):</span>
+                    <span>elena.yogi@example.com / YogiMember2026!</span>
+                  </div>
                 </div>
               </div>
 

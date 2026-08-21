@@ -129,14 +129,14 @@ async function seedDatabase() {
     totalMeditationMinutes: 120,
   };
 
-  // 3. Seed Lead Developer account (Email: omkarsathe3103@gmail.com, Pass: flowstate2026)
+  // 3. Seed user account (Email: omkarsathe3103@gmail.com, Pass: flowstate2026)
   const omkarHash = await bcrypt.hash("flowstate2026", 10);
   const omkarUser: UserRecord = {
     id: "usr-omkar-001",
-    name: "Omkar Sathe (Lead Dev)",
+    name: "Omkar Sathe",
     email: "omkarsathe3103@gmail.com",
     password_hash: omkarHash,
-    role: "developer",
+    role: "user",
     created_at: new Date(Date.now() - 45 * 86400000).toISOString(),
     last_login: new Date().toISOString(),
     is_active: true,
@@ -148,9 +148,29 @@ async function seedDatabase() {
     totalMeditationMinutes: 150,
   };
 
+  // 4. Seed Elena member account (Email: elena.yogi@example.com, Pass: YogiMember2026!)
+  const elenaHash = await bcrypt.hash("YogiMember2026!", 10);
+  const elenaUser: UserRecord = {
+    id: "usr-elena-001",
+    name: "Elena Rostova",
+    email: "elena.yogi@example.com",
+    password_hash: elenaHash,
+    role: "user",
+    created_at: new Date(Date.now() - 20 * 86400000).toISOString(),
+    last_login: new Date().toISOString(),
+    is_active: true,
+    level: "intermediate",
+    focusAreas: ["Evening Restore", "Hip Mobility", "Mindful Breathing"],
+    mindfulMinutesGoal: 25,
+    streakDays: 9,
+    totalYogaMinutes: 240,
+    totalMeditationMinutes: 80,
+  };
+
   DB.users.set(demoUser.id, demoUser);
   DB.users.set(adminUser.id, adminUser);
   DB.users.set(omkarUser.id, omkarUser);
+  DB.users.set(elenaUser.id, elenaUser);
 
   // Seed sample sessions
   DB.yoga_sessions.push(
@@ -399,13 +419,7 @@ async function startServer() {
       // Hash password using bcrypt (10 rounds) - NEVER store plaintext
       const password_hash = await bcrypt.hash(password, 10);
       const userId = "usr-" + crypto.randomUUID().slice(0, 8);
-      const userRole = 
-        role === "developer" || 
-        role === "admin" ||
-        email.toLowerCase() === "omkarsathe3103@gmail.com" || 
-        email.toLowerCase().includes("admin@flowstate") 
-          ? (email.toLowerCase().includes("admin") ? "admin" : "developer")
-          : "user";
+      const userRole = (role === "admin" || email.toLowerCase().includes("admin@flowstate")) ? "admin" : "user";
 
       const newUser: UserRecord = {
         id: userId,

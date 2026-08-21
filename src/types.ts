@@ -246,3 +246,65 @@ export interface SecurityAuditLog {
   status: "SUCCESS" | "WARN" | "BLOCKED";
 }
 
+export type MasteryBadgeCategory = 
+  | "poses" 
+  | "duration" 
+  | "balance" 
+  | "flexibility" 
+  | "strength" 
+  | "ritual" 
+  | "exploration";
+
+export type BadgeRarity = "common" | "rare" | "epic" | "legendary";
+
+export interface MasteryBadge {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  lore: string;
+  iconName: string;
+  category: MasteryBadgeCategory;
+  rarity: BadgeRarity;
+  xpReward: number;
+  // Criteria checks
+  requiredPoseIds?: string[];
+  requiredPoseCategory?: PoseCategory;
+  requiredUniquePoseCount?: number;
+  requiredTotalHoldSeconds?: number;
+  requiredTotalFlowMinutes?: number;
+  requiredStreakDays?: number;
+  required3DInspections?: number;
+  accentColor: string;
+  gradient: string;
+}
+
+export interface PoseCompletionRecord {
+  poseId: string;
+  completedCount: number;
+  totalHoldSeconds: number;
+  lastCompletedAt: string;
+  masteryTier: 1 | 2 | 3; // Tier 1 (Practiced >=1), Tier 2 (Adept >=3), Tier 3 (Master >=5)
+}
+
+export interface UserMasteryState {
+  posesCompleted: Record<string, PoseCompletionRecord>;
+  unlockedBadgeIds: string[];
+  badgeUnlockDates: Record<string, string>;
+  inspected3dPoseIds: string[];
+  totalFlowMinutes: number;
+  totalXp: number;
+  lastUpdated: string;
+}
+
+export interface BadgeProgress {
+  badge: MasteryBadge;
+  isUnlocked: boolean;
+  unlockedAt?: string;
+  currentValue: number;
+  targetValue: number;
+  progressPercent: number;
+  progressLabel: string;
+  missingRequirements?: string[];
+}
+

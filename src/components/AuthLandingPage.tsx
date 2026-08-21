@@ -13,7 +13,6 @@ import {
   Target, 
   LogIn, 
   UserPlus, 
-  Terminal, 
   Key,
   Shield,
   Heart,
@@ -62,7 +61,7 @@ export const AuthLandingPage: React.FC<AuthLandingPageProps> = ({ onLoginSuccess
               name: name.trim(),
               level,
               mindfulMinutesGoal: dailyGoal,
-              role: email.toLowerCase() === "omkarsathe3103@gmail.com" ? "developer" : "user",
+              role: "user",
             }
           : {
               email: email.trim().toLowerCase(),
@@ -96,7 +95,7 @@ export const AuthLandingPage: React.FC<AuthLandingPageProps> = ({ onLoginSuccess
   };
 
   // Quick One-Click Logins for testing and instant access
-  const handleQuickLoginOmkar = async () => {
+  const handleQuickLoginDemo = async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -104,8 +103,8 @@ export const AuthLandingPage: React.FC<AuthLandingPageProps> = ({ onLoginSuccess
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: "omkarsathe3103@gmail.com",
-          password: "flowstate2026",
+          email: "demo@flowstate.com",
+          password: "FlowState@123",
         }),
       });
       const data = await response.json();
@@ -114,17 +113,17 @@ export const AuthLandingPage: React.FC<AuthLandingPageProps> = ({ onLoginSuccess
         localStorage.setItem("flowstate_auth_user", JSON.stringify(data.user));
         onLoginSuccess(data.user);
       } else {
-        // In case not registered yet, auto-register
+        // Auto-register demo if needed
         const regRes = await fetch("/api/auth/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            email: "omkarsathe3103@gmail.com",
-            password: "flowstate2026",
-            name: "Omkar Sathe (Lead Developer)",
-            role: "developer",
-            level: "advanced",
-            mindfulMinutesGoal: 30,
+            email: "demo@flowstate.com",
+            password: "FlowState@123",
+            name: "Demo Yogi",
+            role: "user",
+            level: "intermediate",
+            mindfulMinutesGoal: 20,
           }),
         });
         const regData = await regRes.json();
@@ -258,22 +257,22 @@ export const AuthLandingPage: React.FC<AuthLandingPageProps> = ({ onLoginSuccess
             ))}
           </div>
 
-          {/* Lead Developer Quick Link Badge */}
+          {/* Instant Demo Access Quick Card */}
           <div className="p-4 rounded-2xl bg-[#EBE3D5] border border-[#DDD2C0] flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-[#1E2520] text-[#8BBA85] flex items-center justify-center">
-                <Terminal className="w-4 h-4" />
+              <div className="w-8 h-8 rounded-xl bg-[#4E6548] text-white flex items-center justify-center">
+                <Sparkles className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-xs font-bold text-[#1E2520] block">Developer Access</span>
-                <span className="text-[11px] text-[#556457]">Lead Developer: omkarsathe3103@gmail.com</span>
+                <span className="text-xs font-bold text-[#1E2520] block">Instant Studio Preview</span>
+                <span className="text-[11px] text-[#556457]">Explore all yoga & breathwork features directly</span>
               </div>
             </div>
             <button
-              onClick={handleQuickLoginOmkar}
-              className="py-1.5 px-3 rounded-xl bg-[#1E2520] hover:bg-[#2F3A31] text-[#8BBA85] text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+              onClick={handleQuickLoginDemo}
+              className="py-1.5 px-3 rounded-xl bg-[#4E6548] hover:bg-[#3D5237] text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <span>1-Click Dev Sign-In</span>
+              <span>Quick Explore</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -465,13 +464,13 @@ export const AuthLandingPage: React.FC<AuthLandingPageProps> = ({ onLoginSuccess
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
-                onClick={handleQuickLoginOmkar}
+                onClick={handleQuickLoginDemo}
                 disabled={isLoading}
-                className="p-2 rounded-xl bg-[#1E2520] hover:bg-[#2F3A31] text-[#8BBA85] text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                title="Log in as Omkar Sathe (Developer)"
+                className="p-2 rounded-xl bg-[#4E6548] hover:bg-[#3D5237] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                title="Log in as Demo Yogi"
               >
-                <Terminal className="w-3.5 h-3.5 text-[#8BBA85]" />
-                <span className="truncate">Omkar (Dev)</span>
+                <Sparkles className="w-3.5 h-3.5" />
+                <span className="truncate">Demo Yogi</span>
               </button>
 
               <button

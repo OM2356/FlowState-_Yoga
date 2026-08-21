@@ -1684,67 +1684,6 @@ export const YOGA_POSES: YogaPose[] = [
     }
   },
   {
-    id: "camel-pose",
-    name: "Camel Pose",
-    sanskritName: "Ustrasana",
-    englishPronunciation: "oosh-TRAHS-uh-nuh",
-    category: "backbend",
-    difficulty: "intermediate",
-    primaryMuscles: ["pectoralisChest", "quadriceps", "hipFlexors", "deltoidsShoulders"],
-    secondaryMuscles: ["erectorSpinae", "glutes", "cervicalNeck"],
-    benefits: ["deskPosturedetox", "spineFlexibility", "energyBoost", "stressRelief"],
-    recommendedHoldSeconds: 30,
-    description: "An expansive kneeling backbend that opens the entire anterior chain, expands the thoracic ribcage, and counteracts rounded posture.",
-    stepByStepInstructions: [
-      "Kneel on the mat with knees hip-width apart and thighs perpendicular to the floor.",
-      "Place hands on your lower back/sacrum with fingers pointing downward.",
-      "Press hips forward, engage glutes, and draw shoulder blades toward each other.",
-      "Inhale to lift the chest toward the sky, arching back through the thoracic spine.",
-      "If comfortable, reach one hand at a time back to grasp your heels.",
-      "Keep neck comfortable, gazing upward or softly back without compressing the cervical spine."
-    ],
-    breathGuide: {
-      inhaleAction: "Inhale expansively into the sternum and heart center.",
-      exhaleAction: "Exhale and press hips forward over the knees.",
-      holdNotes: "Maintain open airways with deep, slow breaths."
-    },
-    alignmentCues: [
-      { joint: "Thighs", cue: "Maintained strictly vertical to the floor; do not lean hips back over heels." },
-      { joint: "Chest", cue: "Lift upward first before arching backward." }
-    ],
-    commonMistakes: [
-      { mistake: "Collapsing hips backward toward heels", correction: "Keep pressing the pubic bone forward over knees." }
-    ],
-    modifications: {
-      beginner: "Keep hands supported on sacrum or place blocks next to ankles.",
-      advanced: "Full Camel with hands on soles and tops of feet flat on floor.",
-      propUsage: "Place yoga blocks on their highest height next to each heel."
-    },
-    kinematics: {
-      headTilt: -35,
-      neckAngle: -20,
-      spineCurve: 0.65,
-      torsoAngle: -40,
-      pelvisTilt: -20,
-      leftShoulderAngle: -70,
-      leftElbowAngle: 15,
-      leftWristAngle: 45,
-      rightShoulderAngle: -70,
-      rightElbowAngle: 15,
-      rightWristAngle: 45,
-      leftHipAngle: -20,
-      leftKneeAngle: 90,
-      leftAnkleAngle: 40,
-      rightHipAngle: -20,
-      rightKneeAngle: 90,
-      rightAnkleAngle: 40,
-      elevationY: 0.55,
-      symmetry: true,
-      facing: "side",
-      poseArchetype: "camelPose"
-    }
-  },
-  {
     id: "wheel-pose",
     name: "Wheel Pose (Upward Bow)",
     sanskritName: "Chakrasana / Urdhva Dhanurasana",

@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useRef } from "react";
 import { YogaPose, PoseCategory, DifficultyLevel, MuscleGroup } from "../types";
 import { YOGA_POSES, MUSCLE_GROUPS_INFO } from "../data/posesData";
-import { ThreeYogaHuman } from "./ThreeYogaHuman";
+import { ThreeYogaHuman, CustomJointAngles } from "./ThreeYogaHuman";
 import { audioEngine } from "../utils/audioEngine";
+import confetti from "canvas-confetti";
 import { 
   Play, 
   Pause, 
@@ -31,7 +32,14 @@ import {
   Info,
   Clock,
   Heart,
-  Wind
+  Wind,
+  Code,
+  Terminal,
+  Cpu,
+  Copy,
+  Check,
+  Save,
+  Plus
 } from "lucide-react";
 
 interface ThreeYogaStudioProps {
@@ -56,8 +64,275 @@ export const ThreeYogaStudio: React.FC<ThreeYogaStudioProps> = ({
   const [cameraPreset, setCameraPreset] = useState<"threeQuarter" | "side" | "front" | "top">("threeQuarter");
   const [depthLevel, setDepthLevel] = useState<number>(0.5);
   const [materialMode, setMaterialMode] = useState<"skin" | "heatmap" | "clay" | "wireframe">("skin");
-  const [infoTab, setInfoTab] = useState<"instructions" | "anatomy" | "cues" | "breath">("instructions");
+  const [infoTab, setInfoTab] = useState<"instructions" | "anatomy" | "cues" | "breath" | "pose_creator" | "dev_kinematics" | "dev_json">("instructions");
   const [speakingPose, setSpeakingPose] = useState<boolean>(false);
+  const [copiedJson, setCopiedJson] = useState<boolean>(false);
+
+  // Interactive Pose Creator & Custom Biomechanics Rig State
+  const [isCustomPoseActive, setIsCustomPoseActive] = useState<boolean>(false);
+  const [customPoseName, setCustomPoseName] = useState<string>("Custom Asana Flow");
+  const [customSanskritName, setCustomSanskritName] = useState<string>("Svanasana Asana");
+  const [poseSavedNotice, setPoseSavedNotice] = useState<boolean>(false);
+
+  const [customAngles, setCustomAngles] = useState<CustomJointAngles>({
+    spineFlex: 0,
+    spineTwist: 0,
+    torsoTilt: 0,
+    pelvisY: 1.05,
+    pelvisTilt: 0,
+    headPitch: 0,
+    headYaw: 0,
+    leftArmPitch: 0,
+    leftArmYaw: 0,
+    leftArmRoll: 12,
+    leftElbowFlex: 0,
+    rightArmPitch: 0,
+    rightArmYaw: 0,
+    rightArmRoll: 12,
+    rightElbowFlex: 0,
+    leftHipFlex: 0,
+    leftHipYaw: 0,
+    leftHipRoll: -2,
+    leftKneeFlex: 0,
+    rightHipFlex: 0,
+    rightHipYaw: 0,
+    rightHipRoll: 2,
+    rightKneeFlex: 0,
+  });
+
+  const updateAngle = (key: keyof CustomJointAngles, val: number) => {
+    setIsCustomPoseActive(true);
+    setCustomAngles((prev) => ({
+      ...prev,
+      [key]: val,
+    }));
+  };
+
+  const applyArchetypePreset = (presetName: string) => {
+    setIsCustomPoseActive(true);
+    switch (presetName) {
+      case "warrior2":
+        setCustomPoseName("Warrior II Alignment");
+        setCustomSanskritName("Virabhadrasana II");
+        setCustomAngles({
+          spineFlex: 0,
+          spineTwist: 0,
+          torsoTilt: 0,
+          pelvisY: 0.85,
+          pelvisTilt: 0,
+          headPitch: 0,
+          headYaw: 75,
+          leftArmPitch: 90,
+          leftArmYaw: 0,
+          leftArmRoll: 90,
+          leftElbowFlex: 0,
+          rightArmPitch: 90,
+          rightArmYaw: 0,
+          rightArmRoll: -90,
+          rightElbowFlex: 0,
+          leftHipFlex: 80,
+          leftHipYaw: 20,
+          leftHipRoll: 15,
+          leftKneeFlex: 90,
+          rightHipFlex: 30,
+          rightHipYaw: -10,
+          rightHipRoll: -15,
+          rightKneeFlex: 0,
+        });
+        break;
+      case "backbend":
+        setCustomPoseName("Hero Heart Arch");
+        setCustomSanskritName("Anuvittasana");
+        setCustomAngles({
+          spineFlex: -45,
+          spineTwist: 0,
+          torsoTilt: 0,
+          pelvisY: 1.0,
+          pelvisTilt: -20,
+          headPitch: -35,
+          headYaw: 0,
+          leftArmPitch: 165,
+          leftArmYaw: 0,
+          leftArmRoll: 20,
+          leftElbowFlex: 10,
+          rightArmPitch: 165,
+          rightArmYaw: 0,
+          rightArmRoll: -20,
+          rightElbowFlex: 10,
+          leftHipFlex: -15,
+          leftHipYaw: 0,
+          leftHipRoll: -2,
+          leftKneeFlex: 0,
+          rightHipFlex: -15,
+          rightHipYaw: 0,
+          rightHipRoll: 2,
+          rightKneeFlex: 0,
+        });
+        break;
+      case "warrior3":
+        setCustomPoseName("Warrior III Airplane");
+        setCustomSanskritName("Virabhadrasana III");
+        setCustomAngles({
+          spineFlex: 0,
+          spineTwist: 0,
+          torsoTilt: 0,
+          pelvisY: 0.95,
+          pelvisTilt: 85,
+          headPitch: 10,
+          headYaw: 0,
+          leftArmPitch: 175,
+          leftArmYaw: 0,
+          leftArmRoll: 15,
+          leftElbowFlex: 0,
+          rightArmPitch: 175,
+          rightArmYaw: 0,
+          rightArmRoll: -15,
+          rightElbowFlex: 0,
+          leftHipFlex: 85,
+          leftHipYaw: 0,
+          leftHipRoll: 0,
+          leftKneeFlex: 5,
+          rightHipFlex: -85,
+          rightHipYaw: 0,
+          rightHipRoll: 0,
+          rightKneeFlex: 0,
+        });
+        break;
+      case "tree":
+        setCustomPoseName("Tree Balance Prayer");
+        setCustomSanskritName("Vrksasana");
+        setCustomAngles({
+          spineFlex: 0,
+          spineTwist: 0,
+          torsoTilt: 0,
+          pelvisY: 1.05,
+          pelvisTilt: 0,
+          headPitch: 0,
+          headYaw: 0,
+          leftArmPitch: 35,
+          leftArmYaw: 25,
+          leftArmRoll: -15,
+          leftElbowFlex: 95,
+          rightArmPitch: 35,
+          rightArmYaw: -25,
+          rightArmRoll: 15,
+          rightElbowFlex: 95,
+          leftHipFlex: 0,
+          leftHipYaw: 0,
+          leftHipRoll: -2,
+          leftKneeFlex: 0,
+          rightHipFlex: 50,
+          rightHipYaw: 60,
+          rightHipRoll: 35,
+          rightKneeFlex: 120,
+        });
+        break;
+      case "cobra":
+        setCustomPoseName("Cobra Heart Lift");
+        setCustomSanskritName("Bhujangasana");
+        setCustomAngles({
+          spineFlex: -55,
+          spineTwist: 0,
+          torsoTilt: 0,
+          pelvisY: 0.35,
+          pelvisTilt: -30,
+          headPitch: -40,
+          headYaw: 0,
+          leftArmPitch: -45,
+          leftArmYaw: 0,
+          leftArmRoll: 20,
+          leftElbowFlex: 30,
+          rightArmPitch: -45,
+          rightArmYaw: 0,
+          rightArmRoll: -20,
+          rightElbowFlex: 30,
+          leftHipFlex: 0,
+          leftHipYaw: 0,
+          leftHipRoll: -2,
+          leftKneeFlex: 0,
+          rightHipFlex: 0,
+          rightHipYaw: 0,
+          rightHipRoll: 2,
+          rightKneeFlex: 0,
+        });
+        break;
+      case "squat":
+        setCustomPoseName("Goddess Malasana Squat");
+        setCustomSanskritName("Malasana");
+        setCustomAngles({
+          spineFlex: 10,
+          spineTwist: 0,
+          torsoTilt: 0,
+          pelvisY: 0.45,
+          pelvisTilt: 20,
+          headPitch: 0,
+          headYaw: 0,
+          leftArmPitch: 35,
+          leftArmYaw: 20,
+          leftArmRoll: -15,
+          leftElbowFlex: 90,
+          rightArmPitch: 35,
+          rightArmYaw: -20,
+          rightArmRoll: 15,
+          rightElbowFlex: 90,
+          leftHipFlex: 110,
+          leftHipYaw: 45,
+          leftHipRoll: 35,
+          leftKneeFlex: 130,
+          rightHipFlex: 110,
+          rightHipYaw: 45,
+          rightHipRoll: -35,
+          rightKneeFlex: 130,
+        });
+        break;
+      case "tadasana":
+      default:
+        setCustomPoseName("Rooted Mountain");
+        setCustomSanskritName("Tadasana");
+        setCustomAngles({
+          spineFlex: 0,
+          spineTwist: 0,
+          torsoTilt: 0,
+          pelvisY: 1.05,
+          pelvisTilt: 0,
+          headPitch: 0,
+          headYaw: 0,
+          leftArmPitch: 0,
+          leftArmYaw: 0,
+          leftArmRoll: 12,
+          leftElbowFlex: 0,
+          rightArmPitch: 0,
+          rightArmYaw: 0,
+          rightArmRoll: 12,
+          rightElbowFlex: 0,
+          leftHipFlex: 0,
+          leftHipYaw: 0,
+          leftHipRoll: -2,
+          leftKneeFlex: 0,
+          rightHipFlex: 0,
+          rightHipYaw: 0,
+          rightHipRoll: 2,
+          rightKneeFlex: 0,
+        });
+        break;
+    }
+  };
+
+  const handleResetToPresetPose = () => {
+    setIsCustomPoseActive(false);
+  };
+
+  const handleSaveCustomPose = () => {
+    audioEngine.playSingingBowl(528);
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.7 },
+      colors: ["#4E6548", "#8BBA85", "#C1664C", "#DDA57A"]
+    });
+    setPoseSavedNotice(true);
+    setTimeout(() => setPoseSavedNotice(false), 3000);
+  };
 
   // Current Pose Object
   const currentPose = useMemo(() => {
@@ -270,6 +545,7 @@ export const ThreeYogaStudio: React.FC<ThreeYogaStudioProps> = ({
                 materialMode={materialMode}
                 isBreathing={isPlayingAnimation}
                 interactiveControls={true}
+                customJointAngles={isCustomPoseActive ? customAngles : null}
               />
 
               {/* In-Canvas Camera Quick View Pill */}
@@ -278,6 +554,20 @@ export const ThreeYogaStudio: React.FC<ThreeYogaStudioProps> = ({
                   Drag to rotate • Scroll to zoom
                 </span>
               </div>
+
+              {/* Custom Pose Active Banner */}
+              {isCustomPoseActive && (
+                <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 bg-[#1E2520]/90 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-[#3E4E41] shadow-xs text-xs text-[#8BBA85]">
+                  <Sparkles className="w-3.5 h-3.5 text-[#E6C687]" />
+                  <span className="font-semibold text-[11px]">Custom Joint Rig Active</span>
+                  <button
+                    onClick={handleResetToPresetPose}
+                    className="ml-1 text-[10px] underline text-[#FAF8F4] hover:text-[#C5D5C1] cursor-pointer"
+                  >
+                    Reset
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Comprehensive Playback & Studio Controls Bar */}
@@ -409,17 +699,20 @@ export const ThreeYogaStudio: React.FC<ThreeYogaStudioProps> = ({
           </div>
 
           {/* Info Section Tabs */}
-          <div className="flex items-center gap-1 bg-[#ECE4D6] p-1 rounded-xl text-xs">
+          <div className="flex items-center gap-1 bg-[#ECE4D6] p-1 rounded-xl text-xs overflow-x-auto no-scrollbar">
             {[
               { id: "instructions", label: "Steps" },
               { id: "anatomy", label: "Muscles" },
               { id: "cues", label: "Alignment" },
               { id: "breath", label: "Breathing" },
+              { id: "pose_creator", label: "Pose Creator ✦" },
+              { id: "dev_kinematics", label: "Kinematics" },
+              { id: "dev_json", label: "Rig JSON" },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setInfoTab(tab.id as any)}
-                className={`flex-1 py-1 rounded-lg text-center font-medium transition-colors cursor-pointer ${
+                className={`flex-1 py-1 px-2 rounded-lg text-center font-medium whitespace-nowrap transition-colors cursor-pointer text-[11px] ${
                   infoTab === tab.id
                     ? "bg-[#FAF8F4] text-[#1A221C] font-semibold shadow-2xs"
                     : "text-[#556657] hover:text-[#1A221C]"
@@ -560,6 +853,519 @@ export const ThreeYogaStudio: React.FC<ThreeYogaStudioProps> = ({
 
                 <div className="p-3 rounded-2xl bg-[#FAF8F4] border border-[#E0D7CA] text-xs text-[#556658]">
                   ⏱️ <strong>Hold Notes:</strong> {currentPose.breathGuide.holdNotes}
+                </div>
+              </div>
+            )}
+
+            {/* Interactive Pose Creator & Biomechanical Articulator Tab */}
+            {infoTab === "pose_creator" && (
+              <div className="space-y-4 animate-in fade-in duration-150">
+                <div className="flex items-center justify-between pb-2 border-b border-[#E8DFD2]">
+                  <div className="flex items-center gap-1.5 text-[#4E6548] text-xs font-bold uppercase tracking-wider">
+                    <Sliders className="w-3.5 h-3.5" />
+                    <span>Human Pose Articulator</span>
+                  </div>
+                  <button
+                    onClick={handleResetToPresetPose}
+                    className="text-[11px] font-semibold text-[#8C3A27] hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                    <span>Reset</span>
+                  </button>
+                </div>
+
+                {/* 1-Click Posture Archetype Quick Presets */}
+                <div className="space-y-1.5">
+                  <span className="text-[11px] font-semibold text-[#5A6B5D] uppercase tracking-wider block">
+                    Quick Posture Presets:
+                  </span>
+                  <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+                    {[
+                      { id: "tadasana", label: "Mountain (Neutral)" },
+                      { id: "warrior2", label: "Warrior II Stance" },
+                      { id: "warrior3", label: "Airplane (T-Balance)" },
+                      { id: "tree", label: "Tree Balance" },
+                      { id: "backbend", label: "Hero Arch" },
+                      { id: "cobra", label: "Cobra Ground Lift" },
+                      { id: "squat", label: "Goddess Squat" },
+                    ].map((p) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => applyArchetypePreset(p.id)}
+                        className="py-1 px-2 rounded-xl bg-[#EFE8DC] hover:bg-[#E4DAC9] text-[#2C382F] font-medium border border-[#DDD3C2] transition-colors cursor-pointer text-left truncate"
+                      >
+                        ✦ {p.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Spine, Core & Torso Controls */}
+                <div className="space-y-2.5 p-3 rounded-2xl bg-[#F5EFE6] border border-[#DDD2BF]">
+                  <span className="text-[11px] font-bold text-[#4E6548] uppercase tracking-wider block">
+                    1. Spine & Pelvis Alignment
+                  </span>
+
+                  {/* Spine Flexion / Extension (Arch vs Fold) */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Spine Arch / Forward Fold:</span>
+                      <span className="font-mono font-bold text-[#1A221C]">
+                        {customAngles.spineFlex && customAngles.spineFlex > 0 ? `+${customAngles.spineFlex}° Fold` : customAngles.spineFlex && customAngles.spineFlex < 0 ? `${customAngles.spineFlex}° Arch` : "0° Neutral"}
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min="-75"
+                      max="75"
+                      step="5"
+                      value={customAngles.spineFlex || 0}
+                      onChange={(e) => updateAngle("spineFlex", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Spine Axial Twist */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Spinal Axial Twist:</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.spineTwist || 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="-60"
+                      max="60"
+                      step="5"
+                      value={customAngles.spineTwist || 0}
+                      onChange={(e) => updateAngle("spineTwist", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Pelvis Height / Ground Drop */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Pelvis Elevation (Mat Drop):</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.pelvisY?.toFixed(2) || "1.05"} m</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0.30"
+                      max="1.20"
+                      step="0.05"
+                      value={customAngles.pelvisY || 1.05}
+                      onChange={(e) => updateAngle("pelvisY", parseFloat(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                {/* Head & Drishti Gaze Controls */}
+                <div className="space-y-2.5 p-3 rounded-2xl bg-[#F5EFE6] border border-[#DDD2BF]">
+                  <span className="text-[11px] font-bold text-[#4E6548] uppercase tracking-wider block">
+                    2. Head & Drishti Gaze
+                  </span>
+
+                  {/* Neck Pitch */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Neck Pitch (Sky vs Earth):</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.headPitch || 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="-45"
+                      max="45"
+                      step="5"
+                      value={customAngles.headPitch || 0}
+                      onChange={(e) => updateAngle("headPitch", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Head Yaw / Turn */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Drishti Gaze Turn (Yaw):</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.headYaw || 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="-80"
+                      max="80"
+                      step="5"
+                      value={customAngles.headYaw || 0}
+                      onChange={(e) => updateAngle("headYaw", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                {/* Arms & Shoulders Controls */}
+                <div className="space-y-2.5 p-3 rounded-2xl bg-[#F5EFE6] border border-[#DDD2BF]">
+                  <span className="text-[11px] font-bold text-[#4E6548] uppercase tracking-wider block">
+                    3. Arms & Shoulders
+                  </span>
+
+                  {/* Left Arm Elevation */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Left Shoulder Elevation:</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.leftArmPitch || 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="-180"
+                      max="180"
+                      step="5"
+                      value={customAngles.leftArmPitch || 0}
+                      onChange={(e) => updateAngle("leftArmPitch", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Left Elbow Bend */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Left Elbow Bend:</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.leftElbowFlex || 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="135"
+                      step="5"
+                      value={customAngles.leftElbowFlex || 0}
+                      onChange={(e) => updateAngle("leftElbowFlex", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Right Arm Elevation */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Right Shoulder Elevation:</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.rightArmPitch || 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="-180"
+                      max="180"
+                      step="5"
+                      value={customAngles.rightArmPitch || 0}
+                      onChange={(e) => updateAngle("rightArmPitch", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Right Elbow Bend */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Right Elbow Bend:</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.rightElbowFlex || 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="135"
+                      step="5"
+                      value={customAngles.rightElbowFlex || 0}
+                      onChange={(e) => updateAngle("rightElbowFlex", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                {/* Hips & Legs Controls */}
+                <div className="space-y-2.5 p-3 rounded-2xl bg-[#F5EFE6] border border-[#DDD2BF]">
+                  <span className="text-[11px] font-bold text-[#4E6548] uppercase tracking-wider block">
+                    4. Legs & Knees
+                  </span>
+
+                  {/* Left Hip Flexion / Lunge */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Left Hip Lunge / Step:</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.leftHipFlex || 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="-70"
+                      max="110"
+                      step="5"
+                      value={customAngles.leftHipFlex || 0}
+                      onChange={(e) => updateAngle("leftHipFlex", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Left Knee Flex */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Left Knee Bend:</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.leftKneeFlex || 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="140"
+                      step="5"
+                      value={customAngles.leftKneeFlex || 0}
+                      onChange={(e) => updateAngle("leftKneeFlex", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Right Hip Flexion / Lunge */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Right Hip Lunge / Step:</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.rightHipFlex || 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="-70"
+                      max="110"
+                      step="5"
+                      value={customAngles.rightHipFlex || 0}
+                      onChange={(e) => updateAngle("rightHipFlex", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Right Knee Flex */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] text-[#4F5E52] font-medium">
+                      <span>Right Knee Bend:</span>
+                      <span className="font-mono font-bold text-[#1A221C]">{customAngles.rightKneeFlex || 0}°</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="140"
+                      step="5"
+                      value={customAngles.rightKneeFlex || 0}
+                      onChange={(e) => updateAngle("rightKneeFlex", parseInt(e.target.value))}
+                      className="w-full accent-[#4E6548] cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                {/* Save Custom Posture Action Box */}
+                <div className="p-3.5 rounded-2xl bg-[#EFE8DC] border border-[#D8CCBA] space-y-2.5">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-semibold text-[#566558] block">
+                      Custom Posture Title:
+                    </label>
+                    <input
+                      type="text"
+                      value={customPoseName}
+                      onChange={(e) => setCustomPoseName(e.target.value)}
+                      className="w-full px-2.5 py-1.5 rounded-xl bg-white border border-[#D5CBC0] text-xs text-[#1A221C] focus:outline-none focus:ring-1 focus:ring-[#4E6548]"
+                      placeholder="e.g. My Flowing Warrior"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-semibold text-[#566558] block">
+                      Sanskrit Designation:
+                    </label>
+                    <input
+                      type="text"
+                      value={customSanskritName}
+                      onChange={(e) => setCustomSanskritName(e.target.value)}
+                      className="w-full px-2.5 py-1.5 rounded-xl bg-white border border-[#D5CBC0] text-xs text-[#1A221C] focus:outline-none focus:ring-1 focus:ring-[#4E6548]"
+                      placeholder="e.g. Svanasana Flow"
+                    />
+                  </div>
+
+                  <div className="pt-1 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleSaveCustomPose}
+                      className="flex-1 py-2 px-3 rounded-xl bg-[#4E6548] hover:bg-[#3E5239] text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
+                    >
+                      <Save className="w-3.5 h-3.5" />
+                      <span>{poseSavedNotice ? "Pose Saved! ✓" : "Save Custom Pose"}</span>
+                    </button>
+
+                    {onStartPracticeFlow && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const customPoseObj: YogaPose = {
+                            ...currentPose,
+                            id: `custom-${Date.now()}`,
+                            name: customPoseName,
+                            sanskritName: customSanskritName,
+                            description: "Custom biomechanically crafted yoga posture with personalized skeletal articulation.",
+                          };
+                          onStartPracticeFlow(customPoseObj);
+                        }}
+                        className="py-2 px-3 rounded-xl bg-[#1E2520] hover:bg-[#2C382E] text-[#8BBA85] font-semibold text-xs flex items-center gap-1 transition-colors cursor-pointer"
+                        title="Practice this custom pose"
+                      >
+                        <Play className="w-3.5 h-3.5 fill-current" />
+                        <span>Practice</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Pro Developer: Kinematics & Euler Angles Tab */}
+            {infoTab === "dev_kinematics" && (
+              <div className="space-y-3 animate-in fade-in duration-150">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-[#4E6548] text-xs font-bold uppercase tracking-wider">
+                    <Cpu className="w-3.5 h-3.5" />
+                    <span>Kinematics & Euler Angle Telemetry</span>
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#1E2520] text-[#8BBA85]">
+                    Euler XYZ
+                  </span>
+                </div>
+
+                {/* Biomechanics Telemetry Matrix */}
+                <div className="space-y-2">
+                  <div className="p-2.5 rounded-xl bg-[#F5EFE6] border border-[#DDD3C0] flex items-center justify-between text-xs font-mono">
+                    <span className="text-[#4F5E52]">Spine Flexion/Extension:</span>
+                    <span className="font-semibold text-[#1A221C]">
+                      {currentPose.category === "backbend" ? "+38.4°" : currentPose.category === "forwardBend" ? "-54.2°" : "+4.1°"}
+                    </span>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-[#F5EFE6] border border-[#DDD3C0] flex items-center justify-between text-xs font-mono">
+                    <span className="text-[#4F5E52]">Pelvis Tilt Angle:</span>
+                    <span className="font-semibold text-[#1A221C]">
+                      {currentPose.category === "balance" ? "±1.8° (Active)" : "+8.5°"}
+                    </span>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-[#F5EFE6] border border-[#DDD3C0] flex items-center justify-between text-xs font-mono">
+                    <span className="text-[#4F5E52]">Left / Right Shoulder Abduction:</span>
+                    <span className="font-semibold text-[#1A221C]">
+                      {currentPose.id.includes("warrior") ? "90.0° / 90.0°" : currentPose.id.includes("downward") ? "165.0° / 165.0°" : "25.0° / 25.0°"}
+                    </span>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-[#F5EFE6] border border-[#DDD3C0] flex items-center justify-between text-xs font-mono">
+                    <span className="text-[#4F5E52]">Lead Knee Flexion:</span>
+                    <span className="font-semibold text-[#1A221C]">
+                      {currentPose.id.includes("warrior-2") || currentPose.id.includes("warrior-1") ? "90.0° (Target)" : "0.0° (Extended)"}
+                    </span>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-[#F5EFE6] border border-[#DDD3C0] flex items-center justify-between text-xs font-mono">
+                    <span className="text-[#4F5E52]">Center of Mass (CoM) Stability:</span>
+                    <span className="font-semibold text-[#4E6548]">
+                      {currentPose.difficulty === "advanced" ? "88.2% Stable" : "97.4% Stable"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Ground Reaction Force Vector Indicator */}
+                <div className="p-3 rounded-2xl bg-[#EFE8DC] border border-[#DDD2BF] space-y-1.5 text-xs">
+                  <div className="flex items-center justify-between text-[11px] font-semibold text-[#5A6B5D]">
+                    <span>Ground Reaction Vector:</span>
+                    <span className="text-[#4E6548] font-mono">Fz = 680 N</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-[#DDD2BF] overflow-hidden">
+                    <div
+                      className="h-full bg-[#4E6548] rounded-full"
+                      style={{ width: `${Math.round(depthLevel * 100)}%` }}
+                    />
+                  </div>
+                  <span className="text-[10px] text-[#7A8A7C] block text-right font-mono">
+                    Extension Load: {Math.round(depthLevel * 100)}%
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Pro Developer: Rig JSON Matrix Exporter Tab */}
+            {infoTab === "dev_json" && (
+              <div className="space-y-3 animate-in fade-in duration-150">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-[#4E6548] text-xs font-bold uppercase tracking-wider">
+                    <Code className="w-3.5 h-3.5" />
+                    <span>Kinematics JSON Matrix</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const payload = JSON.stringify(
+                        {
+                          poseId: currentPose.id,
+                          name: currentPose.name,
+                          sanskrit: currentPose.sanskritName,
+                          category: currentPose.category,
+                          difficulty: currentPose.difficulty,
+                          targetMuscles: currentPose.primaryMuscles,
+                          secondaryStabilizers: currentPose.secondaryMuscles,
+                          holdSeconds: currentPose.recommendedHoldSeconds,
+                          kinematics: {
+                            depthLevel: depthLevel,
+                            playbackSpeed: playbackSpeed,
+                            materialMode: materialMode,
+                            spineEuler: currentPose.category === "backbend" ? [0.45, 0, 0] : [0.05, 0, 0],
+                            leftArmEuler: currentPose.id.includes("warrior") ? [0, 0, 1.57] : [0, 0, 0.2],
+                            rightArmEuler: currentPose.id.includes("warrior") ? [0, 0, -1.57] : [0, 0, -0.2],
+                            centerOfMassY: currentPose.category === "seatedRestorative" ? 0.2 : 0.85,
+                          }
+                        },
+                        null,
+                        2
+                      );
+                      navigator.clipboard.writeText(payload);
+                      setCopiedJson(true);
+                      setTimeout(() => setCopiedJson(false), 2500);
+                    }}
+                    className="py-1 px-2.5 rounded-lg bg-[#1E2520] hover:bg-[#2C372E] text-[#8BBA85] text-[11px] font-semibold flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    {copiedJson ? (
+                      <>
+                        <Check className="w-3 h-3 text-[#8BBA85]" />
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>Copy JSON</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Preformatted Syntax Highlight Code Box */}
+                <div className="p-3 rounded-2xl bg-[#181E19] text-[#A6C4A2] font-mono text-[10px] leading-relaxed max-h-[300px] overflow-y-auto border border-[#2B382D] shadow-inner no-scrollbar">
+                  <pre>
+{JSON.stringify(
+  {
+    poseId: currentPose.id,
+    name: currentPose.name,
+    sanskrit: currentPose.sanskritName,
+    category: currentPose.category,
+    difficulty: currentPose.difficulty,
+    targetMuscles: currentPose.primaryMuscles,
+    secondaryStabilizers: currentPose.secondaryMuscles,
+    holdSeconds: currentPose.recommendedHoldSeconds,
+    kinematics: {
+      depthLevel: depthLevel,
+      playbackSpeed: playbackSpeed,
+      materialMode: materialMode,
+      spineEuler: currentPose.category === "backbend" ? [0.45, 0, 0] : [0.05, 0, 0],
+      leftArmEuler: currentPose.id.includes("warrior") ? [0, 0, 1.57] : [0, 0, 0.2],
+      rightArmEuler: currentPose.id.includes("warrior") ? [0, 0, -1.57] : [0, 0, -0.2],
+      centerOfMassY: currentPose.category === "seatedRestorative" ? 0.2 : 0.85,
+    }
+  },
+  null,
+  2
+)}
+                  </pre>
                 </div>
               </div>
             )}
