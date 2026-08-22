@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { UserProfile, FeedbackCategory } from "../types";
+import { authService } from "../services/authService";
 import { 
   MessageSquarePlus, 
   X, 
@@ -59,23 +60,15 @@ export const UserFeedbackModal: React.FC<UserFeedbackModalProps> = ({
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: currentUser?.id || "guest",
-          userName: currentUser?.name || guestName || "Guest Yogi",
-          userEmail: currentUser?.email || guestEmail || "guest@flowstate.app",
-          type: selectedType,
-          priority,
-          title: title.trim(),
-          description: description.trim(),
-        }),
+      await authService.submitFeedback({
+        userId: currentUser?.id || "guest",
+        userName: currentUser?.name || guestName || "Guest Yogi",
+        userEmail: currentUser?.email || guestEmail || "guest@flowstate.app",
+        type: selectedType,
+        priority,
+        title: title.trim(),
+        description: description.trim(),
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to submit feedback.");
-      }
 
       setIsSuccess(true);
       if (onFeedbackSubmitted) onFeedbackSubmitted();

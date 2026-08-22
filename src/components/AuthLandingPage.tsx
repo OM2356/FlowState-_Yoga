@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { UserProfile } from "../types";
+import { authService } from "../services/authService";
 import { 
   User, 
   Mail, 
@@ -52,43 +53,25 @@ export const AuthLandingPage: React.FC<AuthLandingPageProps> = ({ onLoginSuccess
     setIsLoading(true);
 
     try {
-      const endpoint = mode === "signup" ? "/api/auth/register" : "/api/auth/login";
-      const payload =
-        mode === "signup"
-          ? {
-              email: email.trim().toLowerCase(),
-              password: password.trim(),
-              name: name.trim(),
-              level,
-              mindfulMinutesGoal: dailyGoal,
-              role: "user",
-            }
-          : {
-              email: email.trim().toLowerCase(),
-              password: password.trim(),
-            };
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Authentication failed. Please check your credentials.");
-      }
-
-      if (data.token) {
-        localStorage.setItem("flowstate_auth_token", data.token);
-      }
-      if (data.user) {
-        localStorage.setItem("flowstate_auth_user", JSON.stringify(data.user));
-        onLoginSuccess(data.user);
+      if (mode === "signup") {
+        const result = await authService.register({
+          email: email.trim().toLowerCase(),
+          password: password.trim(),
+          name: name.trim(),
+          level,
+          mindfulMinutesGoal: dailyGoal,
+          role: "user",
+        });
+        onLoginSuccess(result.user);
+      } else {
+        const result = await authService.login({
+          email: email.trim().toLowerCase(),
+          password: password.trim(),
+        });
+        onLoginSuccess(result.user);
       }
     } catch (err: any) {
-      setError(err.message || "An unexpected network error occurred.");
+      setError(err.message || "Authentication failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
@@ -99,40 +82,11 @@ export const AuthLandingPage: React.FC<AuthLandingPageProps> = ({ onLoginSuccess
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: "demo@flowstate.com",
-          password: "FlowState@123",
-        }),
+      const result = await authService.login({
+        email: "demo@flowstate.com",
+        password: "FlowState@123",
       });
-      const data = await response.json();
-      if (response.ok && data.user) {
-        localStorage.setItem("flowstate_auth_token", data.token);
-        localStorage.setItem("flowstate_auth_user", JSON.stringify(data.user));
-        onLoginSuccess(data.user);
-      } else {
-        // Auto-register demo if needed
-        const regRes = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email: "demo@flowstate.com",
-            password: "FlowState@123",
-            name: "Demo Yogi",
-            role: "user",
-            level: "intermediate",
-            mindfulMinutesGoal: 20,
-          }),
-        });
-        const regData = await regRes.json();
-        if (regData.user) {
-          localStorage.setItem("flowstate_auth_token", regData.token);
-          localStorage.setItem("flowstate_auth_user", JSON.stringify(regData.user));
-          onLoginSuccess(regData.user);
-        }
-      }
+      onLoginSuccess(result.user);
     } catch (err: any) {
       setError(err.message || "Failed to log in.");
     } finally {
@@ -144,20 +98,11 @@ export const AuthLandingPage: React.FC<AuthLandingPageProps> = ({ onLoginSuccess
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: "elena.yogi@example.com",
-          password: "YogiMember2026!",
-        }),
+      const result = await authService.login({
+        email: "elena.yogi@example.com",
+        password: "YogiMember2026!",
       });
-      const data = await response.json();
-      if (response.ok && data.user) {
-        localStorage.setItem("flowstate_auth_token", data.token);
-        localStorage.setItem("flowstate_auth_user", JSON.stringify(data.user));
-        onLoginSuccess(data.user);
-      }
+      onLoginSuccess(result.user);
     } catch (err: any) {
       setError(err.message || "Failed to log in.");
     } finally {
@@ -169,20 +114,11 @@ export const AuthLandingPage: React.FC<AuthLandingPageProps> = ({ onLoginSuccess
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: "dev@flowstate.internal",
-          password: "DeveloperPass123!",
-        }),
+      const result = await authService.login({
+        email: "omkarsathe3103@gmail.com",
+        password: "OmkarYoga2026!",
       });
-      const data = await response.json();
-      if (response.ok && data.user) {
-        localStorage.setItem("flowstate_auth_token", data.token);
-        localStorage.setItem("flowstate_auth_user", JSON.stringify(data.user));
-        onLoginSuccess(data.user);
-      }
+      onLoginSuccess(result.user);
     } catch (err: any) {
       setError(err.message || "Failed to log in.");
     } finally {

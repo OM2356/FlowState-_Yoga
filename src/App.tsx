@@ -9,6 +9,7 @@ import {
   getXpRankInfo
 } from "./data/masteryBadges";
 import { audioEngine } from "./utils/audioEngine";
+import { authService } from "./services/authService";
 import { InstantFlowGenerator } from "./components/InstantFlowGenerator";
 import { MoodSessionSelector } from "./components/MoodSessionSelector";
 import { SequenceExplorer } from "./components/SequenceExplorer";
@@ -130,9 +131,17 @@ export default function App() {
   useEffect(() => {
     if (currentUser?.id) {
       fetch(`/api/sessions?userId=${currentUser.id}`)
-        .then((r) => r.json())
+        .then(async (r) => {
+          if (!r.ok) return null;
+          const text = await r.text();
+          try {
+            return text ? JSON.parse(text) : null;
+          } catch {
+            return null;
+          }
+        })
         .then((data) => {
-          if (Array.isArray(data.sessions) && data.sessions.length > 0) {
+          if (data && Array.isArray(data.sessions) && data.sessions.length > 0) {
             setSessionHistory((prev) => {
               const combined = [...data.sessions, ...prev];
               // De-duplicate by id
@@ -314,27 +323,8 @@ export default function App() {
       });
     }
 
-    // Sync to backend DB for developer-side visibility
-    try {
-      await fetch("/api/sessions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: currentUser?.id || "guest-user",
-          userName: currentUser?.name || "Guest Practitioner",
-          sequenceId: record.sequenceId,
-          sequenceTitle: record.sequenceTitle,
-          durationMinutes: record.durationMinutes,
-          moodBefore: record.moodBefore,
-          moodAfter: record.moodAfter,
-          physicalFeelingAfter: record.physicalFeelingAfter,
-          rating: record.rating,
-          notes: record.notes,
-        }),
-      });
-    } catch (e) {
-      console.warn("Backend session sync deferred:", e);
-    }
+    // Sync to backend DB or local storage for session tracking
+    authService.recordSession(record);
   };
 
   // If user is not authenticated yet, render the full Login & Registration landing page

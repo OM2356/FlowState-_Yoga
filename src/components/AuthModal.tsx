@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { UserProfile } from "../types";
+import { authService } from "../services/authService";
 import { 
   User, 
   Mail, 
@@ -66,35 +67,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setIsLoading(true);
 
     try {
-      const endpoint = mode === "signup" ? "/api/auth/register" : "/api/auth/login";
-      const payload =
-        mode === "signup"
-          ? { email, password, name, level, mindfulMinutesGoal: dailyGoal }
-          : { email, password };
-
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Authentication failed.");
-      }
-
-      if (data.token) {
-        localStorage.setItem("flowstate_auth_token", data.token);
-      }
-      if (data.user) {
-        localStorage.setItem("flowstate_auth_user", JSON.stringify(data.user));
-        onLogin(data.user);
+      if (mode === "signup") {
+        const result = await authService.register({
+          email,
+          password,
+          name,
+          level,
+          mindfulMinutesGoal: dailyGoal,
+        });
+        onLogin(result.user);
+      } else {
+        const result = await authService.login({ email, password });
+        onLogin(result.user);
       }
 
       onClose();
     } catch (err: any) {
-      setError(err.message || "An unexpected network error occurred.");
+      setError(err.message || "Authentication failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -106,7 +95,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     setIsLoading(true);
     try {
-      const token = localStorage.getItem("flowstate_auth_token") || "";
       const updated: UserProfile = {
         ...currentUser,
         name: name || currentUser.name,
@@ -114,27 +102,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         mindfulMinutesGoal: dailyGoal,
       };
 
-      await fetch("/api/auth/profile", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: currentUser.id,
-          name: updated.name,
-          level: updated.level,
-          mindfulMinutesGoal: updated.mindfulMinutesGoal,
-        }),
-      });
-
-      localStorage.setItem("flowstate_auth_user", JSON.stringify(updated));
-      onUpdateProfile(updated);
+      const savedUser = await authService.updateProfile(updated);
+      onUpdateProfile(savedUser);
       onClose();
-    } catch {
-      // Fallback local update
-      onUpdateProfile({ ...currentUser, name: name || currentUser.name, level, mindfulMinutesGoal: dailyGoal });
-      onClose();
+    } catch (err: any) {
+      setError(err.message || "Failed to update profile.");
     } finally {
       setIsLoading(false);
     }
