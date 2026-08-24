@@ -37,7 +37,6 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
   const [guidesActive, setGuidesActive] = useState<boolean>(initialGuides);
   const [mistakesActive, setMistakesActive] = useState<boolean>(initialMistakes);
   const [activeDepth, setActiveDepth] = useState<number>(depthLevel);
-  const [breathScale, setBreathScale] = useState<number>(1);
 
   // Sync with prop changes if provided
   useEffect(() => {
@@ -48,18 +47,12 @@ export const HumanYogaAvatar: React.FC<HumanYogaAvatarProps> = ({
     setActiveDepth(depthLevel);
   }, [depthLevel]);
 
-  // Breathing expansion simulation
-  useEffect(() => {
-    if (!isBreathing) {
-      setBreathScale(1);
-      return;
-    }
-    if (breathPhase === "inhale" || breathPhase === "hold-in") {
-      setBreathScale(1.035);
-    } else {
-      setBreathScale(0.975);
-    }
-  }, [isBreathing, breathPhase]);
+  // Breathing expansion calculation
+  const breathScale = !isBreathing
+    ? 1
+    : breathPhase === "inhale" || breathPhase === "hold-in"
+    ? 1.035
+    : 0.975;
 
   const archetype = pose.kinematics.poseArchetype;
 

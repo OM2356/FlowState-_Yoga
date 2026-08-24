@@ -986,6 +986,376 @@ Please feel free to ask about any specific posture, pain relief, or breathing te
     };
   };
 
+  // ----------------------------------------------------
+  // AI YOGA CHATBOT & ROUTINE ASSISTANT (/api/chat)
+  // ----------------------------------------------------
+
+  const FALLBACK_ROUTINES: Record<string, any> = {
+    back: {
+      message: "Namaste! I hear that you are experiencing mild lower back tension. Let's move with gentle compassion, focusing on gentle spinal decompression and core stability without any forced twisting or deep forward flexion.",
+      routine: {
+        title: "Lower Back Decompression & Posture Flow",
+        focusArea: "Spinal Mobility & Shoulder Opening",
+        precautions: "Avoid pulling forcefully in backbends; maintain a soft bend in knees and move with breath. Always consult a physician if experiencing sharp, shooting, or acute pain.",
+        durationMinutes: 15,
+        level: "beginner",
+        warmUp: ["Cat-Cow Stretch", "Child's Pose"],
+        mainFlow: ["Sphinx Pose", "Glute Bridges", "Reclined Hand-to-Big-Toe Prep"],
+        coolDown: ["Gentle Reclined Spinal Twist", "Corpse Pose (Savasana)"],
+        poses: [
+          {
+            name: "Cat-Cow Stretch (Marjaryasana-Bitilasana)",
+            duration: "5-8 breaths",
+            visualCue: "Inhale to arch back softly and look up; exhale to round spine towards ceiling.",
+            benefit: "Warms up vertebrae and releases mid-back tightness.",
+            targetMuscles: ["Erector Spinae", "Abdominals"]
+          },
+          {
+            name: "Child's Pose (Balasana)",
+            duration: "1-2 minutes",
+            visualCue: "Hips sink back to heels, knees wide, forehead grounded, arms reaching forward.",
+            benefit: "Gently lengthens lumbar spine and relaxes the sacrum.",
+            targetMuscles: ["Lower Back", "Glutes", "Lats"]
+          },
+          {
+            name: "Sphinx Pose (Salamba Bhujangasana)",
+            duration: "1 minute",
+            visualCue: "Lie on belly, forearms on mat parallel to each other, gently press chest forward.",
+            benefit: "Strengthens lumbar region with safe natural curvature without compressive pinching.",
+            targetMuscles: ["Upper Back", "Lumbar Spine", "Chest"]
+          },
+          {
+            name: "Glute Bridges (Setu Bandhasana prep)",
+            duration: "10 reps (slow)",
+            visualCue: "Press heels down, engage core, lift hips until knees and shoulders align.",
+            benefit: "Activates gluteal muscles and hamstrings to relieve excessive pressure from the lower back.",
+            targetMuscles: ["Gluteus Maximus", "Hamstrings", "Transverse Abdominis"]
+          },
+          {
+            name: "Reclined Spinal Twist (Supta Matsyendrasana)",
+            duration: "1 minute each side",
+            visualCue: "Lie on back, hug right knee in, gently guide knee across body with shoulders pinned down.",
+            benefit: "Releases tension in the lower back and stretches outer hip rotators.",
+            targetMuscles: ["Obliques", "Gluteus Medius", "Spinal Rotators"]
+          },
+          {
+            name: "Corpse Pose (Savasana)",
+            duration: "3 minutes",
+            visualCue: "Lie flat on your back, arms open at sides with palms facing up, soften jaw and breath.",
+            benefit: "Calms sympathetic nervous system and consolidates tissue relaxation.",
+            targetMuscles: ["Full Body Relaxation"]
+          }
+        ]
+      }
+    },
+    posture: {
+      message: "Namaste! Improving upper body posture will expand your rib cage, improve oxygen capacity, and eliminate desk hunching.",
+      routine: {
+        title: "Upper Body Posture & Chest Opening Flow",
+        focusArea: "Thoracic Mobility, Scapular Retraction & Core Alignment",
+        precautions: "Keep shoulders relaxed down away from ears. Avoid overarching the lumbar spine by keeping the navel softly drawn in.",
+        durationMinutes: 15,
+        level: "all-levels",
+        warmUp: ["Seated Neck & Shoulder Rolls", "Cactus Arms Expansion"],
+        mainFlow: ["Cobra Pose", "Downward-Facing Dog", "Warrior II"],
+        coolDown: ["Puppy Pose (Heart Melting)", "Savasana"],
+        poses: [
+          {
+            name: "Cat-Cow with Scapular Waves",
+            duration: "6 breaths",
+            visualCue: "On hands and knees, glide shoulder blades together on inhale, spread them wide on exhale.",
+            benefit: "Mobilizes thoracic spine and awakens rhomboids.",
+            targetMuscles: ["Rhomboids", "Serratus Anterior"]
+          },
+          {
+            name: "Downward-Facing Dog (Adho Mukha Svanasana)",
+            duration: "1 minute",
+            visualCue: "Press firmly through hands, draw chest towards thighs, create inverted V shape.",
+            benefit: "Decompresses the entire spine and lengthens tight pectoral muscles.",
+            targetMuscles: ["Shoulders", "Hamstrings", "Lats"]
+          },
+          {
+            name: "Cobra Pose (Bhujangasana)",
+            duration: "5 breaths",
+            visualCue: "Palms under shoulders, lift chest using upper back muscles with minimal weight in hands.",
+            benefit: "Counteracts forward head posture by strengthening erector spinae and posterior deltoids.",
+            targetMuscles: ["Upper Back", "Chest", "Trapezius"]
+          },
+          {
+            name: "Warrior II (Virabhadrasana II)",
+            duration: "45 seconds per side",
+            visualCue: "Arms extended parallel to mat at shoulder height, gaze over front fingertips, open hips.",
+            benefit: "Builds upright stamina, balances pelvic tilt, and expands chest.",
+            targetMuscles: ["Deltoids", "Quadriceps", "Core"]
+          },
+          {
+            name: "Puppy Pose (Uttana Shishosana)",
+            duration: "1-2 minutes",
+            visualCue: "Hips stay stacked directly above knees, walk hands forward and melt forehead and chest to mat.",
+            benefit: "Deep passive opening for stiff shoulders, chest, and thoracic spine.",
+            targetMuscles: ["Pectorals", "Latissimus Dorsi", "Shoulders"]
+          },
+          {
+            name: "Corpse Pose (Savasana)",
+            duration: "2-3 minutes",
+            visualCue: "Rest comfortably on back, letting collarbones broaden naturally with every exhale.",
+            benefit: "Integrates postural realignment into neural muscle memory.",
+            targetMuscles: ["Nervous System Integration"]
+          }
+        ]
+      }
+    },
+    morning: {
+      message: "Namaste and Good Morning! This invigorating routine gently awakens circulation, lubricates all major joints, and centers your breath for a vibrant day.",
+      routine: {
+        title: "Morning Vitality & Prana Energy Flow",
+        focusArea: "Full Body Awakening & Mind-Body Focus",
+        precautions: "Move smoothly without rushing. Since the body is stiffer in the morning, honor smaller ranges of motion.",
+        durationMinutes: 12,
+        level: "beginner",
+        warmUp: ["Gentle Cat-Cow", "Wrist & Ankle Circles"],
+        mainFlow: ["Sun Salutation A Prep", "Tree Pose", "Low Lunge"],
+        coolDown: ["Child's Pose", "Seated Breath Meditation"],
+        poses: [
+          {
+            name: "Cat-Cow Spine Awakening",
+            duration: "5-6 breaths",
+            visualCue: "Inhale arch gently, exhale curve spine skyward with belly drawn in.",
+            benefit: "Stimulates cerebrospinal fluid flow and awakens spinal nerve pathways.",
+            targetMuscles: ["Spine", "Core"]
+          },
+          {
+            name: "Downward-Facing Dog (Adho Mukha Svanasana)",
+            duration: "1 minute (pedaling heels)",
+            visualCue: "Gently pedal feet left and right to wake up calves and hamstrings.",
+            benefit: "Invigorates circulation by gently inverting the heart above the head.",
+            targetMuscles: ["Calves", "Hamstrings", "Shoulders"]
+          },
+          {
+            name: "Low Lunge (Anjaneyasana)",
+            duration: "45 seconds per side",
+            visualCue: "Step one foot forward between hands, lower back knee down, sweep arms overhead.",
+            benefit: "Stretches tight hip flexors and psoas muscles from sleep.",
+            targetMuscles: ["Psoas", "Quadriceps", "Chest"]
+          },
+          {
+            name: "Tree Pose (Vrksasana)",
+            duration: "30-45 seconds per side",
+            visualCue: "Place sole of foot on inner calf or thigh (never on knee joint), hands at heart center.",
+            benefit: "Sharpens mental focus, balances nervous system, and grounds energy.",
+            targetMuscles: ["Ankles", "Core", "Hip Abductors"]
+          },
+          {
+            name: "Child's Pose (Balasana)",
+            duration: "2 minutes",
+            visualCue: "Rest hips back, take 5 slow diaphragmatic breaths into your lower back.",
+            benefit: "Deep grounded calm before beginning daily activities.",
+            targetMuscles: ["Lower Back", "Hips"]
+          }
+        ]
+      }
+    },
+    desk: {
+      message: "Namaste! Spending long hours sitting compresses the spine and tightens the neck and hips. This targeted desk recovery routine will restore physical ease.",
+      routine: {
+        title: "Desk Worker Neck, Shoulder & Hip Reset",
+        focusArea: "Cervical Alignment, Psoas Release & Scapular Mobility",
+        precautions: "Avoid forcing neck rotation; keep all cervical movements gentle and fluid with steady nasal breathing.",
+        durationMinutes: 10,
+        level: "all-levels",
+        warmUp: ["Ear-to-Shoulder Neck Stretches", "Shoulder Shrugs & Rolls"],
+        mainFlow: ["Eagle Arms Stretch", "Low Lunge Psoas Opener", "Half Pigeon / Seated Figure 4"],
+        coolDown: ["Child's Pose", "Corpse Pose"],
+        poses: [
+          {
+            name: "Eagle Arms Stretch (Garudasana Arms)",
+            duration: "5 breaths each side",
+            visualCue: "Cross right elbow under left, wrap forearms together with palms pressing, lift elbows to shoulder height.",
+            benefit: "Deep stretch for rhomboids and space between shoulder blades.",
+            targetMuscles: ["Upper Trapezius", "Rhomboids", "Deltoids"]
+          },
+          {
+            name: "Low Lunge (Anjaneyasana)",
+            duration: "45 seconds per side",
+            visualCue: "Right foot forward, left knee on mat, hands on front thigh or reaching up, sink pelvis forward.",
+            benefit: "Counteracts tight hip flexors caused by 8+ hours of chair sitting.",
+            targetMuscles: ["Iliopsoas", "Rectus Femoris"]
+          },
+          {
+            name: "Sphinx Pose (Salamba Bhujangasana)",
+            duration: "1 minute",
+            visualCue: "Rest on forearms, draw chest through arm bones, gently look forward.",
+            benefit: "Restores natural lumbar lordosis and opens tight chest.",
+            targetMuscles: ["Upper Back", "Pectorals"]
+          },
+          {
+            name: "Half Pigeon Pose (Ardha Kapotasana)",
+            duration: "1 minute per side",
+            visualCue: "Right shin forward at comfortable angle, back leg straight, fold forward softly.",
+            benefit: "Releases deep tension in piriformis and gluteal muscles to prevent sciatica.",
+            targetMuscles: ["Gluteus Medius", "Piriformis", "IT Band"]
+          },
+          {
+            name: "Child's Pose (Balasana)",
+            duration: "2 minutes",
+            visualCue: "Sink back into heels, extend fingertips long, breathe into lower ribs.",
+            benefit: "Allows nervous system to shift from sympathetic stress to healing parasympathetic rest.",
+            targetMuscles: ["Spine", "Hips", "Shoulders"]
+          }
+        ]
+      }
+    }
+  };
+
+  const handleChatAssistant = async (req: express.Request, res: express.Response) => {
+    const ip = req.ip || req.socket.remoteAddress;
+    const body = req.body || {};
+    let promptText = "";
+
+    if (typeof body.prompt === "string") {
+      promptText = body.prompt;
+    } else if (typeof body.message === "string") {
+      promptText = body.message;
+    } else if (Array.isArray(body.messages) && body.messages.length > 0) {
+      const lastMsg = body.messages[body.messages.length - 1];
+      promptText = lastMsg.content || lastMsg.text || "";
+    }
+
+    promptText = promptText.trim();
+    if (!promptText) {
+      return res.status(400).json({ error: "A prompt or message is required." });
+    }
+
+    const lower = promptText.toLowerCase();
+
+    // Determine fallback key based on context keywords
+    let fallbackKey = "back";
+    if (lower.includes("posture") || lower.includes("chest") || lower.includes("hunch") || lower.includes("straight")) {
+      fallbackKey = "posture";
+    } else if (lower.includes("morning") || lower.includes("energy") || lower.includes("wake") || lower.includes("sun")) {
+      fallbackKey = "morning";
+    } else if (lower.includes("desk") || lower.includes("neck") || lower.includes("shoulder") || lower.includes("sit")) {
+      fallbackKey = "desk";
+    } else if (lower.includes("hip") || lower.includes("sciatica") || lower.includes("glute")) {
+      fallbackKey = "back";
+    }
+
+    const defaultFallback = FALLBACK_ROUTINES[fallbackKey] || FALLBACK_ROUTINES.back;
+
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        logSecurityEvent("AI_QUERY", ip, `Chat fallback served for query: "${promptText.slice(0, 30)}..."`, "SUCCESS");
+        return res.json({
+          message: defaultFallback.message,
+          routine: defaultFallback.routine,
+          text: `${defaultFallback.message}\n\n${JSON.stringify(defaultFallback.routine, null, 2)}`
+        });
+      }
+
+      const ai = getGeminiClient();
+      const systemInstruction = `You are an expert AI Yoga Instructor specializing in posture alignment, mobility, and gentle therapy.
+
+Strict Instructions:
+1. Safety Protocols:
+   - For back pain: Avoid deep forward folds or sudden twisting. Focus on spinal decompression, core stability (glute bridges, gentle sphinx, bird-dog), and safe hip openers.
+   - For posture: Focus on chest openers, upper back strengthening (rhomboids, posterior deltoids), and pelvic alignment.
+   - Always include a concise safety warning to consult a medical professional if pain is acute, sharp, or severe.
+
+2. Routine Structure:
+   - Structure routines logically: Warm-up (~15%), Main Asana Flow (~70%), Cool-down/Savasana (~15%).
+   - Include 4 to 6 specific yoga poses.
+   - Keep pose explanations concise with clear duration (in breaths or minutes).
+
+3. Response Format:
+   Return valid JSON with the following schema:
+   {
+     "message": "A short, warm, empathetic introductory message in courteous tone",
+     "routine": {
+       "title": "Clear descriptive routine title",
+       "focusArea": "Primary physical and mental focus areas",
+       "precautions": "Safety guidance and disclaimer",
+       "durationMinutes": 15,
+       "level": "beginner | intermediate | all-levels",
+       "warmUp": ["Pose 1", "Pose 2"],
+       "mainFlow": ["Pose 3", "Pose 4"],
+       "coolDown": ["Pose 5", "Corpse Pose"],
+       "poses": [
+         {
+           "name": "Pose Name in English (and Sanskrit)",
+           "duration": "e.g., 5-8 breaths or 1 minute",
+           "visualCue": "Clear, concise anatomical visual cue",
+           "benefit": "Biomechanical and wellness benefit",
+           "targetMuscles": ["Muscle 1", "Muscle 2"]
+         }
+       ]
+     }
+   }`;
+
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `User Query / Condition / Goal: "${promptText}"`,
+        config: {
+          systemInstruction,
+          responseMimeType: "application/json",
+          temperature: 0.6,
+        },
+      });
+
+      const responseText = response.text || "";
+      let parsedData: any = null;
+
+      try {
+        parsedData = JSON.parse(responseText);
+      } catch (parseErr) {
+        // Attempt substring regex extraction if markdown wraps it
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          parsedData = JSON.parse(jsonMatch[0]);
+        }
+      }
+
+      if (parsedData && parsedData.routine) {
+        logSecurityEvent("AI_QUERY", ip, `AI Routine generated for query: "${promptText.slice(0, 30)}..."`, "SUCCESS");
+        return res.json({
+          message: parsedData.message || defaultFallback.message,
+          routine: parsedData.routine,
+          text: responseText
+        });
+      }
+
+      // If structure slightly different (top level has routine fields)
+      if (parsedData && parsedData.poses) {
+        return res.json({
+          message: parsedData.message || defaultFallback.message,
+          routine: parsedData,
+          text: responseText
+        });
+      }
+
+      // Fallback if parsing failed
+      return res.json({
+        message: defaultFallback.message,
+        routine: defaultFallback.routine,
+        text: responseText || `${defaultFallback.message}\n\n${JSON.stringify(defaultFallback.routine, null, 2)}`
+      });
+
+    } catch (err: any) {
+      console.error("Chat API Error:", err);
+      logSecurityEvent("AI_QUERY", ip, `Chat API error, served fallback: ${err?.message}`, "WARN");
+      return res.json({
+        message: defaultFallback.message,
+        routine: defaultFallback.routine,
+        text: `${defaultFallback.message}\n\n${JSON.stringify(defaultFallback.routine, null, 2)}`
+      });
+    }
+  };
+
+  // Support all standard chat & routine endpoints
+  app.post("/api/chat", handleChatAssistant);
+  app.post("/api/ai/chat", handleChatAssistant);
+  app.post("/api/ai/routine", handleChatAssistant);
+
   const handleCoachRequest = async (req: express.Request, res: express.Response) => {
     const { message, history, contextPose } = req.body;
     if (!message || typeof message !== "string") {

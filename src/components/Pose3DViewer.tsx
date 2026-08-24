@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { YogaPose, UserMasteryState } from "../types";
 import { HumanYogaAvatar } from "./HumanYogaAvatar";
 import { ThreeYogaHuman } from "./ThreeYogaHuman";
+import { AnimatedPoseFigure } from "./AnimatedPoseFigure";
 import { MUSCLE_GROUPS_INFO } from "../data/posesData";
 import { audioEngine } from "../utils/audioEngine";
 import { 
@@ -127,15 +128,59 @@ export const Pose3DViewer: React.FC<Pose3DViewerProps> = ({
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Column: Realistic Human Figure Visualizer */}
           <div className="lg:col-span-6 flex flex-col gap-3">
-            <div className="w-full h-[380px] rounded-2xl overflow-hidden border border-[#DDD4C4] bg-[#F7F4EE] shadow-xs">
-              <ThreeYogaHuman
-                pose={pose}
-                height={380}
-                depthLevel={depth}
-                showMuscleHeatmap={activeTab === "anatomy"}
-                materialMode={activeTab === "anatomy" ? "heatmap" : "skin"}
-                interactiveControls={true}
-              />
+            {/* View Mode Toggle Pill */}
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#EDE5D8] border border-[#DDD4C4]">
+                <button
+                  onClick={() => setViewMode("threejs-3d")}
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                    viewMode === "threejs-3d"
+                      ? "bg-white text-[#1A221C] shadow-2xs font-bold"
+                      : "text-[#6B7C6E] hover:text-[#1A221C]"
+                  }`}
+                >
+                  <Rotate3d className="w-3.5 h-3.5" />
+                  <span>3D Interactive</span>
+                </button>
+                <button
+                  onClick={() => setViewMode("vector-2d")}
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                    viewMode === "vector-2d"
+                      ? "bg-white text-[#1A221C] shadow-2xs font-bold"
+                      : "text-[#6B7C6E] hover:text-[#1A221C]"
+                  }`}
+                >
+                  <Activity className="w-3.5 h-3.5" />
+                  <span>2D Animation</span>
+                </button>
+              </div>
+
+              <span className="text-[11px] font-medium text-[#7A8A7C]">
+                {viewMode === "threejs-3d" ? "Drag to Orbit & Inspect" : "Kinetic Motion Loop"}
+              </span>
+            </div>
+
+            <div className="w-full h-[380px] rounded-2xl overflow-hidden border border-[#DDD4C4] bg-[#F7F4EE] shadow-xs relative flex items-center justify-center">
+              {viewMode === "threejs-3d" ? (
+                <ThreeYogaHuman
+                  pose={pose}
+                  height={380}
+                  depthLevel={depth}
+                  showMuscleHeatmap={activeTab === "anatomy"}
+                  materialMode={activeTab === "anatomy" ? "heatmap" : "skin"}
+                  interactiveControls={true}
+                />
+              ) : (
+                <div className="w-full h-full p-4 flex items-center justify-center">
+                  <AnimatedPoseFigure
+                    poseId={pose.id}
+                    poseName={pose.name}
+                    isPlaying={true}
+                    speed={1.0}
+                    showBreathRhythm={true}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Action Buttons underneath avatar */}

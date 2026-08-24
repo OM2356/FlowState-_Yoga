@@ -14,10 +14,13 @@ import {
   ArrowRight,
   ShieldCheck,
   Flame,
-  Wind
+  Wind,
+  Layers,
+  MessageSquareText
 } from "lucide-react";
-import { YogaPose } from "../types";
+import { YogaPose, FlowSequence } from "../types";
 import { YOGA_POSES } from "../data/posesData";
+import YogaChatbot from "./YogaChatbot";
 
 interface ChatMessage {
   id: string;
@@ -31,12 +34,15 @@ interface ChatMessage {
 interface AICoachChatProps {
   onInspectPose?: (pose: YogaPose) => void;
   onPracticePose?: (pose: YogaPose) => void;
+  onStartFlow?: (flow: FlowSequence) => void;
 }
 
 export const AICoachChat: React.FC<AICoachChatProps> = ({
   onInspectPose,
   onPracticePose,
+  onStartFlow,
 }) => {
+  const [activeMode, setActiveMode] = useState<"routine" | "chat">("routine");
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "msg-init",
@@ -197,194 +203,249 @@ How can I support your practice today?`,
   ];
 
   return (
-    <div id="ai-coach-chat-container" className="bg-[#FAF7F2] rounded-3xl border border-[#E2DAD0] shadow-xs flex flex-col h-[740px] overflow-hidden">
-      {/* Top Coach Header */}
-      <div className="px-6 py-4.5 border-b border-[#E4DCD0] bg-[#F4EDE2] flex items-center justify-between flex-wrap gap-3">
-        <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-[#4E6548] text-white flex items-center justify-center shadow-xs">
-            <Bot className="w-6 h-6" />
+    <div id="ai-coach-chat-container" className="space-y-6">
+      {/* Top Mode Segmented Switcher */}
+      <div className="flex items-center justify-between flex-wrap gap-4 bg-[#FAF7F2] p-4 sm:p-5 rounded-3xl border border-[#E2DAD0] shadow-2xs">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-[#4E6548] text-white flex items-center justify-center shadow-xs">
+            <Bot className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2.5">
-              <h2 className="text-lg sm:text-xl font-serif font-medium text-[#1A221C]">
-                FlowState AI Yoga Coach
-              </h2>
-              <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#4E6548] bg-[#4E6548]/10 px-2.5 py-0.5 rounded-full">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#4E6548] animate-pulse" />
-                Online & Ready
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-[#5D6B60] mt-0.5">
-              Friendly posture alignment, injury prevention & plain-language guidance
+            <h2 className="text-lg sm:text-xl font-serif font-medium text-[#1A221C]">
+              FlowState AI Yoga Studio Assistant
+            </h2>
+            <p className="text-xs text-[#5D6B60]">
+              Personalized routines, spinal decompression, posture alignment, and mindful guidance
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-[#718073] hidden md:inline">
-            Clear, easy-to-understand explanations
-          </span>
+        <div className="flex items-center gap-1.5 bg-[#EFE8DC] p-1.5 rounded-2xl border border-[#DFD6C7]">
+          <button
+            onClick={() => setActiveMode("routine")}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+              activeMode === "routine"
+                ? "bg-[#4E6548] text-white shadow-xs"
+                : "text-[#425044] hover:text-[#1A221C]"
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>AI Routine Generator</span>
+          </button>
+          <button
+            onClick={() => setActiveMode("chat")}
+            className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+              activeMode === "chat"
+                ? "bg-[#4E6548] text-white shadow-xs"
+                : "text-[#425044] hover:text-[#1A221C]"
+            }`}
+          >
+            <MessageSquareText className="w-3.5 h-3.5" />
+            <span>Interactive Q&A Coach</span>
+          </button>
         </div>
       </div>
 
-      {/* Messages Scroll Area */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 bg-[#FAF7F2]">
-        {messages.map((msg) => {
-          const matchingPose = msg.suggestedPoseId
-            ? YOGA_POSES.find((p) => p.id === msg.suggestedPoseId)
-            : null;
+      {/* Routine Generator View */}
+      {activeMode === "routine" && (
+        <YogaChatbot 
+          onStartFlow={onStartFlow} 
+          onInspectPose={onInspectPose} 
+        />
+      )}
 
-          return (
-            <div
-              key={msg.id}
-              className={`flex items-start gap-3 sm:gap-4 ${
-                msg.sender === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              {msg.sender === "coach" && (
-                <div className="w-9 h-9 rounded-2xl bg-[#4E6548] text-white flex items-center justify-center shrink-0 mt-1 shadow-2xs">
-                  <Bot className="w-5 h-5" />
+      {/* Interactive Chat Mode */}
+      {activeMode === "chat" && (
+        <div className="bg-[#FAF7F2] rounded-3xl border border-[#E2DAD0] shadow-xs flex flex-col h-[740px] overflow-hidden">
+          {/* Top Coach Header */}
+          <div className="px-6 py-4.5 border-b border-[#E4DCD0] bg-[#F4EDE2] flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3.5">
+              <div className="w-10 h-10 rounded-2xl bg-[#4E6548] text-white flex items-center justify-center shadow-xs">
+                <Bot className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2.5">
+                  <h3 className="text-base sm:text-lg font-serif font-medium text-[#1A221C]">
+                    Conversational Yoga Guru
+                  </h3>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#4E6548] bg-[#4E6548]/10 px-2.5 py-0.5 rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#4E6548] animate-pulse" />
+                    Online
+                  </span>
                 </div>
-              )}
+                <p className="text-xs text-[#5D6B60] mt-0.5">
+                  Ask biomechanical questions, posture adjustments & breathing tips
+                </p>
+              </div>
+            </div>
 
-              <div
-                className={`max-w-[90%] sm:max-w-[78%] rounded-3xl p-5 sm:p-6 text-sm sm:text-base leading-relaxed ${
-                  msg.sender === "user"
-                    ? "bg-[#4E6548] text-white rounded-tr-md shadow-xs"
-                    : "bg-[#F4ECE0] text-[#1E2720] rounded-tl-md border border-[#E0D5C5] shadow-2xs font-sans"
-                }`}
-              >
-                {/* Message Body */}
-                <div className="whitespace-pre-line text-sm sm:text-base font-normal tracking-wide">
-                  {msg.text}
-                </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-[#718073] hidden md:inline">
+                Natural voice read-aloud supported
+              </span>
+            </div>
+          </div>
 
-                {/* Interactive Pose Recommendation Card */}
-                {msg.sender === "coach" && matchingPose && (
-                  <div className="mt-4 p-4 rounded-2xl bg-[#FAF7F2] border border-[#DDD3C2] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#EBE2D4] text-[#4E6548] flex items-center justify-center font-serif text-sm font-medium">
-                        {matchingPose.name.charAt(0)}
-                      </div>
-                      <div>
-                        <span className="text-xs font-semibold text-[#8B5A3C] uppercase tracking-wider block">
-                          Recommended Posture
-                        </span>
-                        <h4 className="text-sm sm:text-base font-serif font-medium text-[#1E2520]">
-                          {matchingPose.name} ({matchingPose.sanskritName})
-                        </h4>
-                      </div>
+          {/* Messages Scroll Area */}
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5 bg-[#FAF7F2]">
+            {messages.map((msg) => {
+              const matchingPose = msg.suggestedPoseId
+                ? YOGA_POSES.find((p) => p.id === msg.suggestedPoseId)
+                : null;
+
+              return (
+                <div
+                  key={msg.id}
+                  className={`flex items-start gap-3 sm:gap-4 ${
+                    msg.sender === "user" ? "justify-end" : "justify-start"
+                  }`}
+                >
+                  {msg.sender === "coach" && (
+                    <div className="w-9 h-9 rounded-2xl bg-[#4E6548] text-white flex items-center justify-center shrink-0 mt-1 shadow-2xs">
+                      <Bot className="w-5 h-5" />
+                    </div>
+                  )}
+
+                  <div
+                    className={`max-w-[90%] sm:max-w-[78%] rounded-3xl p-5 sm:p-6 text-sm sm:text-base leading-relaxed ${
+                      msg.sender === "user"
+                        ? "bg-[#4E6548] text-white rounded-tr-md shadow-xs"
+                        : "bg-[#F4ECE0] text-[#1E2720] rounded-tl-md border border-[#E0D5C5] shadow-2xs font-sans"
+                    }`}
+                  >
+                    {/* Message Body */}
+                    <div className="whitespace-pre-line text-sm sm:text-base font-normal tracking-wide">
+                      {msg.text}
                     </div>
 
-                    <div className="flex items-center gap-2 w-full sm:w-auto">
-                      {onInspectPose && (
+                    {/* Interactive Pose Recommendation Card */}
+                    {msg.sender === "coach" && matchingPose && (
+                      <div className="mt-4 p-4 rounded-2xl bg-[#FAF7F2] border border-[#DDD3C2] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-[#EBE2D4] text-[#4E6548] flex items-center justify-center font-serif text-sm font-medium">
+                            {matchingPose.name.charAt(0)}
+                          </div>
+                          <div>
+                            <span className="text-xs font-semibold text-[#8B5A3C] uppercase tracking-wider block">
+                              Recommended Posture
+                            </span>
+                            <h4 className="text-sm sm:text-base font-serif font-medium text-[#1E2520]">
+                              {matchingPose.name} ({matchingPose.sanskritName})
+                            </h4>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                          {onInspectPose && (
+                            <button
+                              onClick={() => onInspectPose(matchingPose)}
+                              className="flex-1 sm:flex-none px-3 py-1.5 rounded-xl bg-[#EBE2D4] hover:bg-[#DDD2C0] text-[#2D382F] text-xs font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                            >
+                              <Eye className="w-3.5 h-3.5 text-[#4E6548]" />
+                              <span>View 3D Form</span>
+                            </button>
+                          )}
+                          {onPracticePose && (
+                            <button
+                              onClick={() => onPracticePose(matchingPose)}
+                              className="flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl bg-[#4E6548] hover:bg-[#3D5237] text-white text-xs font-medium flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+                            >
+                              <Play className="w-3.5 h-3.5 fill-current" />
+                              <span>Practice</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Footer bar with timestamp & voice read-aloud */}
+                    <div className="flex items-center justify-between mt-3 pt-2 border-t border-black/5 text-xs">
+                      <span className={msg.sender === "user" ? "text-[#D6E3D4]" : "text-[#758477]"}>
+                        {msg.timestamp}
+                      </span>
+
+                      {msg.sender === "coach" && (
                         <button
-                          onClick={() => onInspectPose(matchingPose)}
-                          className="flex-1 sm:flex-none px-3 py-1.5 rounded-xl bg-[#EBE2D4] hover:bg-[#DDD2C0] text-[#2D382F] text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
+                          onClick={() => handleToggleSpeech(msg.id, msg.text)}
+                          className="flex items-center gap-1 text-xs text-[#5D6D5E] hover:text-[#2D392E] font-medium transition-colors px-2 py-0.5 rounded-lg hover:bg-black/5 cursor-pointer"
+                          title="Listen to this guidance"
                         >
-                          <Eye className="w-3.5 h-3.5 text-[#4E6548]" />
-                          <span>View 3D Form</span>
-                        </button>
-                      )}
-                      {onPracticePose && (
-                        <button
-                          onClick={() => onPracticePose(matchingPose)}
-                          className="flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl bg-[#4E6548] hover:bg-[#3D5237] text-white text-xs font-medium flex items-center justify-center gap-1.5 shadow-xs transition-colors"
-                        >
-                          <Play className="w-3.5 h-3.5 fill-current" />
-                          <span>Practice</span>
+                          {isSpeaking && speakingMessageId === msg.id ? (
+                            <>
+                              <VolumeX className="w-3.5 h-3.5 text-[#C1664C]" />
+                              <span className="text-[#C1664C]">Stop Audio</span>
+                            </>
+                          ) : (
+                            <>
+                              <Volume2 className="w-3.5 h-3.5 text-[#4E6548]" />
+                              <span>Listen (Voice)</span>
+                            </>
+                          )}
                         </button>
                       )}
                     </div>
                   </div>
-                )}
 
-                {/* Footer bar with timestamp & voice read-aloud */}
-                <div className="flex items-center justify-between mt-3 pt-2 border-t border-black/5 text-xs">
-                  <span className={msg.sender === "user" ? "text-[#D6E3D4]" : "text-[#758477]"}>
-                    {msg.timestamp}
-                  </span>
-
-                  {msg.sender === "coach" && (
-                    <button
-                      onClick={() => handleToggleSpeech(msg.id, msg.text)}
-                      className="flex items-center gap-1 text-xs text-[#5D6D5E] hover:text-[#2D392E] font-medium transition-colors px-2 py-0.5 rounded-lg hover:bg-black/5"
-                      title="Listen to this guidance"
-                    >
-                      {isSpeaking && speakingMessageId === msg.id ? (
-                        <>
-                          <VolumeX className="w-3.5 h-3.5 text-[#C1664C]" />
-                          <span className="text-[#C1664C]">Stop Audio</span>
-                        </>
-                      ) : (
-                        <>
-                          <Volume2 className="w-3.5 h-3.5 text-[#4E6548]" />
-                          <span>Listen (Voice)</span>
-                        </>
-                      )}
-                    </button>
+                  {msg.sender === "user" && (
+                    <div className="w-9 h-9 rounded-2xl bg-[#C1664C] text-white flex items-center justify-center shrink-0 mt-1 shadow-2xs">
+                      <User className="w-5 h-5" />
+                    </div>
                   )}
                 </div>
+              );
+            })}
+
+            {isLoading && (
+              <div className="flex items-center gap-3 p-4 rounded-2xl bg-[#F4ECE0] max-w-sm text-[#4E6548] border border-[#E0D5C5] shadow-2xs">
+                <RefreshCw className="w-5 h-5 animate-spin" />
+                <span className="text-sm font-medium">Consulting yoga coach for clear, simple guidance...</span>
               </div>
+            )}
 
-              {msg.sender === "user" && (
-                <div className="w-9 h-9 rounded-2xl bg-[#C1664C] text-white flex items-center justify-center shrink-0 mt-1 shadow-2xs">
-                  <User className="w-5 h-5" />
-                </div>
-              )}
-            </div>
-          );
-        })}
-
-        {isLoading && (
-          <div className="flex items-center gap-3 p-4 rounded-2xl bg-[#F4ECE0] max-w-sm text-[#4E6548] border border-[#E0D5C5] shadow-2xs">
-            <RefreshCw className="w-5 h-5 animate-spin" />
-            <span className="text-sm font-medium">Consulting yoga coach for clear, simple guidance...</span>
+            <div ref={messagesEndRef} />
           </div>
-        )}
 
-        <div ref={messagesEndRef} />
-      </div>
+          {/* Suggested Quick Question Chips */}
+          <div className="px-4 sm:px-6 py-2.5 bg-[#F0E8DC] border-t border-[#E2DAD0] flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <span className="text-xs font-semibold text-[#677769] whitespace-nowrap">
+              Quick Topics:
+            </span>
+            {quickTopics.map((topic, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleSendMessage(undefined, topic.prompt)}
+                className="px-3.5 py-1.5 rounded-xl bg-[#FAF7F2] hover:bg-[#E5DCD0] text-[#334035] text-xs font-medium border border-[#DCD3C3] whitespace-nowrap shadow-2xs transition-colors cursor-pointer"
+              >
+                {topic.label}
+              </button>
+            ))}
+          </div>
 
-      {/* Suggested Quick Question Chips */}
-      <div className="px-4 sm:px-6 py-2.5 bg-[#F0E8DC] border-t border-[#E2DAD0] flex items-center gap-2 overflow-x-auto no-scrollbar">
-        <span className="text-xs font-semibold text-[#677769] whitespace-nowrap">
-          Quick Topics:
-        </span>
-        {quickTopics.map((topic, idx) => (
-          <button
-            key={idx}
-            onClick={() => handleSendMessage(undefined, topic.prompt)}
-            className="px-3.5 py-1.5 rounded-xl bg-[#FAF7F2] hover:bg-[#E5DCD0] text-[#334035] text-xs font-medium border border-[#DCD3C3] whitespace-nowrap shadow-2xs transition-colors"
+          {/* Input Form */}
+          <form
+            onSubmit={handleSendMessage}
+            className="p-4 sm:p-5 bg-[#FAF7F2] border-t border-[#E4DCD0] flex items-center gap-3"
           >
-            {topic.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Input Form */}
-      <form
-        onSubmit={handleSendMessage}
-        className="p-4 sm:p-5 bg-[#FAF7F2] border-t border-[#E4DCD0] flex items-center gap-3"
-      >
-        <input
-          id="coach-chat-input"
-          type="text"
-          placeholder="Ask a question in plain English (e.g., 'How do I stop my lower back hurting in Cobra?')"
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          className="flex-1 px-5 py-3.5 rounded-2xl bg-[#F4EDE2] border border-[#D8CEBE] text-sm sm:text-base text-[#1E2520] placeholder-[#8A978E] focus:outline-hidden focus:border-[#4E6548] focus:ring-2 focus:ring-[#4E6548]/20 transition-all"
-        />
-        <button
-          type="submit"
-          id="btn-send-coach-chat"
-          disabled={isLoading || !inputMessage.trim()}
-          className="px-5 py-3.5 rounded-2xl bg-[#4E6548] hover:bg-[#3D5237] disabled:opacity-40 text-white font-medium text-sm flex items-center gap-2 shadow-xs transition-all cursor-pointer"
-        >
-          <span>Ask</span>
-          <Send className="w-4 h-4" />
-        </button>
-      </form>
+            <input
+              id="coach-chat-input"
+              type="text"
+              placeholder="Ask a question in plain English (e.g., 'How do I stop my lower back hurting in Cobra?')"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              className="flex-1 px-5 py-3.5 rounded-2xl bg-[#F4EDE2] border border-[#D8CEBE] text-sm sm:text-base text-[#1E2520] placeholder-[#8A978E] focus:outline-hidden focus:border-[#4E6548] focus:ring-2 focus:ring-[#4E6548]/20 transition-all"
+            />
+            <button
+              type="submit"
+              id="btn-send-coach-chat"
+              disabled={isLoading || !inputMessage.trim()}
+              className="px-5 py-3.5 rounded-2xl bg-[#4E6548] hover:bg-[#3D5237] disabled:opacity-40 text-white font-medium text-sm flex items-center gap-2 shadow-xs transition-all cursor-pointer"
+            >
+              <span>Ask</span>
+              <Send className="w-4 h-4" />
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

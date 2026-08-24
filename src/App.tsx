@@ -27,6 +27,7 @@ import { AuthModal } from "./components/AuthModal";
 import { AuthLandingPage } from "./components/AuthLandingPage";
 import { SuryaNamaskarStudio } from "./components/SuryaNamaskarStudio";
 import { ThreeYogaStudio } from "./components/ThreeYogaStudio";
+import RoutineView from "./components/RoutineView";
 import { 
   Compass, 
   Layers, 
@@ -77,7 +78,7 @@ const getToastBadgeIcon = (iconName: string, className = "w-6 h-6 text-white") =
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<
-    "mood" | "studio3d" | "surya" | "instant" | "tension" | "sequences" | "poses" | "breathwork" | "coach" | "guide" | "profile"
+    "mood" | "routine" | "studio3d" | "surya" | "instant" | "tension" | "sequences" | "poses" | "breathwork" | "coach" | "guide" | "profile"
   >("mood");
   
   // Active modals & live practice states
@@ -152,7 +153,7 @@ export default function App() {
         })
         .catch(() => {});
     }
-  }, [currentUser]);
+  }, [currentUser?.id]);
 
   // Track 3D pose inspections for Biomechanics mastery
   const handleInspectPose = (pose: YogaPose) => {
@@ -341,8 +342,9 @@ export default function App() {
   // Defined navigation tabs
   const navTabs = [
     { id: "mood", label: "Mood Flow", icon: Smile },
+    { id: "routine", label: "Day Routine", icon: Clock },
     { id: "studio3d", label: "3D Studio", icon: Rotate3d, isSpecial: true },
-    { id: "surya", label: "Surya Namaskar 3D", icon: Sun, isSpecial: true },
+    { id: "surya", label: "Surya 3D", icon: Sun, isSpecial: true },
     { id: "instant", label: "AI Generator", icon: Sparkles },
     { id: "tension", label: "Body Relief", icon: Activity },
     { id: "sequences", label: "Yoga Flows", icon: Layers },
@@ -514,11 +516,18 @@ export default function App() {
       )}
 
       {/* Main App Content Viewport */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 sm:py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-6 sm:py-8 pb-20 sm:pb-8">
         {activeTab === "mood" && (
           <MoodSessionSelector
             onStartFlow={handleStartFlow}
             onInspectPose={(pose) => setInspectedPose(pose)}
+          />
+        )}
+
+        {activeTab === "routine" && (
+          <RoutineView
+            dayTitle="Day 9"
+            onStartFlow={handleStartFlow}
           />
         )}
 
@@ -592,6 +601,7 @@ export default function App() {
           <AICoachChat
             onInspectPose={handleInspectPose}
             onPracticePose={handlePracticeSinglePose}
+            onStartFlow={handleStartFlow}
           />
         )}
 
@@ -734,6 +744,59 @@ export default function App() {
         onClose={() => setIsFeedbackOpen(false)}
         currentUser={currentUser}
       />
+
+      {/* Mobile Bottom Navigation Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-30 bg-[#FAF8F3]/95 backdrop-blur-md border-t border-[#E2DAD0] px-4 py-2 flex items-center justify-around sm:hidden shadow-lg">
+        <button
+          onClick={() => setActiveTab("mood")}
+          className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
+            activeTab === "mood" ? "text-[#4E6548] font-bold" : "text-[#7A8A7C] font-medium"
+          }`}
+        >
+          <Smile className={`w-5 h-5 ${activeTab === "mood" ? "stroke-[2.5]" : "stroke-[1.8]"}`} />
+          <span className="text-[10px]">Flows</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("studio3d")}
+          className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
+            activeTab === "studio3d" ? "text-[#4E6548] font-bold" : "text-[#7A8A7C] font-medium"
+          }`}
+        >
+          <Rotate3d className={`w-5 h-5 ${activeTab === "studio3d" ? "stroke-[2.5]" : "stroke-[1.8]"}`} />
+          <span className="text-[10px]">3D Studio</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("surya")}
+          className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
+            activeTab === "surya" ? "text-[#4E6548] font-bold" : "text-[#7A8A7C] font-medium"
+          }`}
+        >
+          <Sun className={`w-5 h-5 ${activeTab === "surya" ? "stroke-[2.5]" : "stroke-[1.8]"}`} />
+          <span className="text-[10px]">Surya 3D</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("poses")}
+          className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
+            activeTab === "poses" ? "text-[#4E6548] font-bold" : "text-[#7A8A7C] font-medium"
+          }`}
+        >
+          <BookOpen className={`w-5 h-5 ${activeTab === "poses" ? "stroke-[2.5]" : "stroke-[1.8]"}`} />
+          <span className="text-[10px]">Library</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab("profile")}
+          className={`flex flex-col items-center gap-1 py-1 px-3 transition-colors ${
+            activeTab === "profile" ? "text-[#4E6548] font-bold" : "text-[#7A8A7C] font-medium"
+          }`}
+        >
+          <User className={`w-5 h-5 ${activeTab === "profile" ? "stroke-[2.5]" : "stroke-[1.8]"}`} />
+          <span className="text-[10px]">Profile</span>
+        </button>
+      </nav>
     </div>
   );
 }

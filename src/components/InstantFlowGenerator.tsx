@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { FlowSequence, FlowItem, YogaPose, BenefitTag } from "../types";
 import { YOGA_POSES } from "../data/posesData";
 import { MOOD_OPTIONS } from "../data/presetFlows";
@@ -34,10 +34,9 @@ export const InstantFlowGenerator: React.FC<InstantFlowGeneratorProps> = ({
   const [durationMinutes, setDurationMinutes] = useState<number>(15);
   const [experienceLevel, setExperienceLevel] = useState<"beginner" | "intermediate" | "advanced">("beginner");
   const [isGeneratingAI, setIsGeneratingAI] = useState<boolean>(false);
-  const [compiledFlow, setCompiledFlow] = useState<FlowSequence | null>(null);
 
   // Compile a personalized flow based on selected criteria
-  const generateFlow = () => {
+  const compiledFlow = useMemo<FlowSequence>(() => {
     const selectedMood = MOOD_OPTIONS.find((m) => m.id === selectedMoodId) || MOOD_OPTIONS[0];
 
     // Filter poses matching target benefits & physical regions
@@ -67,9 +66,9 @@ export const InstantFlowGenerator: React.FC<InstantFlowGeneratorProps> = ({
     });
 
     // Add candidate poses up to count - 1
-    const shuffled = [...candidatePoses].filter((p) => p.id !== "child-pose" && p.id !== "savasana").sort(() => 0.5 - Math.random());
-    for (let i = 0; i < Math.min(poseCount - 2, shuffled.length); i++) {
-      const p = shuffled[i];
+    const filteredCandidates = candidatePoses.filter((p) => p.id !== "child-pose" && p.id !== "savasana");
+    for (let i = 0; i < Math.min(poseCount - 2, filteredCandidates.length); i++) {
+      const p = filteredCandidates[i % filteredCandidates.length];
       selectedFlowItems.push({
         poseId: p.id,
         durationSeconds: avgDuration,
@@ -85,8 +84,8 @@ export const InstantFlowGenerator: React.FC<InstantFlowGeneratorProps> = ({
       note: "Rest in effortless surrender."
     });
 
-    const newFlow: FlowSequence = {
-      id: "instant-flow-" + Date.now(),
+    return {
+      id: `instant-flow-${selectedMoodId}-${durationMinutes}`,
       title: `${selectedMood.label} Recovery Sequence`,
       subtitle: `${durationMinutes}-minute tailored ritual focusing on ${selectedMood.subtext.toLowerCase()}.`,
       durationMinutes,
@@ -99,13 +98,6 @@ export const InstantFlowGenerator: React.FC<InstantFlowGeneratorProps> = ({
       poses: selectedFlowItems,
       isCustom: true,
     };
-
-    setCompiledFlow(newFlow);
-  };
-
-  // Compile on initial render or state change
-  React.useEffect(() => {
-    generateFlow();
   }, [selectedMoodId, selectedPhysicalFocus, durationMinutes, experienceLevel]);
 
   const toggleMuscleFocus = (muscle: string) => {
