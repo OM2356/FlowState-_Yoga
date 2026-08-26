@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { YogaPose, UserMasteryState } from "../types";
 import { HumanYogaAvatar } from "./HumanYogaAvatar";
-import { ThreeYogaHuman } from "./ThreeYogaHuman";
 import { AnimatedPoseFigure } from "./AnimatedPoseFigure";
 import { MUSCLE_GROUPS_INFO } from "../data/posesData";
 import { audioEngine } from "../utils/audioEngine";
@@ -18,11 +17,11 @@ import {
   Plus, 
   Play, 
   HelpCircle,
-  Rotate3d,
   Layers,
   Trophy,
   Star,
-  Award
+  Award,
+  Zap
 } from "lucide-react";
 
 interface Pose3DViewerProps {
@@ -43,8 +42,7 @@ export const Pose3DViewer: React.FC<Pose3DViewerProps> = ({
   onLogPoseMastery,
 }) => {
   const [activeTab, setActiveTab] = useState<"overview" | "anatomy" | "alignment" | "modifications">("overview");
-  const [viewMode, setViewMode] = useState<"threejs-3d" | "vector-2d">("threejs-3d");
-  const [depth, setDepth] = useState<number>(0.5);
+  const [viewMode, setViewMode] = useState<"kinetic" | "anatomical">("kinetic");
   const [isPlayingAudioCue, setIsPlayingAudioCue] = useState<boolean>(false);
 
   const poseRecord = masteryState?.posesCompleted[pose.id];
@@ -82,28 +80,6 @@ export const Pose3DViewer: React.FC<Pose3DViewerProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* 3D Mode Toggle */}
-            <div className="flex items-center bg-[#E5DDD0] p-0.5 rounded-xl text-xs">
-              <button
-                onClick={() => setActiveTab("overview")}
-                className={`px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1 ${
-                  activeTab !== "anatomy" ? "bg-[#5A6D56] text-white shadow-xs" : "text-[#4A5A4E] hover:text-[#1E231F]"
-                }`}
-              >
-                <Rotate3d className="w-3.5 h-3.5" />
-                <span>3D Skin</span>
-              </button>
-              <button
-                onClick={() => setActiveTab("anatomy")}
-                className={`px-2.5 py-1 rounded-lg font-medium transition-all flex items-center gap-1 ${
-                  activeTab === "anatomy" ? "bg-[#5A6D56] text-white shadow-xs" : "text-[#4A5A4E] hover:text-[#1E231F]"
-                }`}
-              >
-                <Activity className="w-3.5 h-3.5" />
-                <span>3D Heatmap</span>
-              </button>
-            </div>
-
             <button
               id="btn-listen-pose-cue"
               onClick={handlePlayVoiceCue}
@@ -132,45 +108,36 @@ export const Pose3DViewer: React.FC<Pose3DViewerProps> = ({
             <div className="flex items-center justify-between px-1">
               <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#EDE5D8] border border-[#DDD4C4]">
                 <button
-                  onClick={() => setViewMode("threejs-3d")}
+                  onClick={() => setViewMode("kinetic")}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                    viewMode === "threejs-3d"
+                    viewMode === "kinetic"
                       ? "bg-white text-[#1A221C] shadow-2xs font-bold"
                       : "text-[#6B7C6E] hover:text-[#1A221C]"
                   }`}
                 >
-                  <Rotate3d className="w-3.5 h-3.5" />
-                  <span>3D Interactive</span>
+                  <Zap className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Kinetic Movement</span>
                 </button>
                 <button
-                  onClick={() => setViewMode("vector-2d")}
+                  onClick={() => setViewMode("anatomical")}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                    viewMode === "vector-2d"
+                    viewMode === "anatomical"
                       ? "bg-white text-[#1A221C] shadow-2xs font-bold"
                       : "text-[#6B7C6E] hover:text-[#1A221C]"
                   }`}
                 >
-                  <Activity className="w-3.5 h-3.5" />
-                  <span>2D Animation</span>
+                  <Activity className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Anatomy Heatmap</span>
                 </button>
               </div>
 
               <span className="text-[11px] font-medium text-[#7A8A7C]">
-                {viewMode === "threejs-3d" ? "Drag to Orbit & Inspect" : "Kinetic Motion Loop"}
+                {viewMode === "kinetic" ? "Live Motion & Breathing" : "Muscle Activation Map"}
               </span>
             </div>
 
             <div className="w-full h-[380px] rounded-2xl overflow-hidden border border-[#DDD4C4] bg-[#F7F4EE] shadow-xs relative flex items-center justify-center">
-              {viewMode === "threejs-3d" ? (
-                <ThreeYogaHuman
-                  pose={pose}
-                  height={380}
-                  depthLevel={depth}
-                  showMuscleHeatmap={activeTab === "anatomy"}
-                  materialMode={activeTab === "anatomy" ? "heatmap" : "skin"}
-                  interactiveControls={true}
-                />
-              ) : (
+              {viewMode === "kinetic" ? (
                 <div className="w-full h-full p-4 flex items-center justify-center">
                   <AnimatedPoseFigure
                     poseId={pose.id}
@@ -178,6 +145,17 @@ export const Pose3DViewer: React.FC<Pose3DViewerProps> = ({
                     isPlaying={true}
                     speed={1.0}
                     showBreathRhythm={true}
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-full p-4 flex items-center justify-center">
+                  <HumanYogaAvatar
+                    kinematics={pose.kinematics}
+                    primaryMuscles={pose.primaryMuscles}
+                    secondaryMuscles={pose.secondaryMuscles}
+                    showMuscleHeatmap={true}
+                    width={320}
+                    height={340}
                   />
                 </div>
               )}
@@ -192,7 +170,7 @@ export const Pose3DViewer: React.FC<Pose3DViewerProps> = ({
                   className="flex-1 py-2.5 px-4 rounded-xl bg-[#5A6D56] hover:bg-[#495A46] text-white font-medium text-xs flex items-center justify-center gap-2 shadow-xs transition-colors"
                 >
                   <Play className="w-3.5 h-3.5 fill-current" />
-                  <span>Practice This Pose Now</span>
+                  <span>Practice Form (3 Min)</span>
                 </button>
               )}
 

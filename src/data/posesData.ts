@@ -1742,6 +1742,502 @@ export const YOGA_POSES: YogaPose[] = [
       facing: "side",
       poseArchetype: "wheelPose"
     }
+  },
+  {
+    id: "skater-jump",
+    name: "Skater Jump",
+    sanskritName: "Skater Vinyasa",
+    englishPronunciation: "SKAY-ter jump",
+    category: "balance",
+    difficulty: "intermediate",
+    primaryMuscles: ["glutes", "quadriceps", "calvesAnkles"],
+    secondaryMuscles: ["coreAbdominals", "hamstrings", "hipFlexors"],
+    benefits: ["energyBoost", "runnersRecovery", "coreStrength", "hipMobility"],
+    recommendedHoldSeconds: 36,
+    description: "A dynamic lateral plyometric movement that builds single-leg balance, stabilizer strength in the outer hips and ankles, and cardiovascular rhythm.",
+    stepByStepInstructions: [
+      "Start standing with feet hip-width apart and knees softly bent.",
+      "Leap laterally to the right side, landing gently on your right foot while swinging your left leg behind you diagonally.",
+      "Sweep your left arm across your body toward your right hip for counterbalance.",
+      "Absorb the landing softly with a bent knee, engaging your outer glute.",
+      "Explosively push off the right foot and bound laterally to the left, repeating with fluid rhythm."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale as you gather momentum and push off the standing foot.",
+      exhaleAction: "Exhale sharply on landing to stabilize the core and pelvic floor.",
+      holdNotes: "Maintain a steady 36-second rhythmic cadence with controlled breathing."
+    },
+    alignmentCues: [
+      { joint: "Knee & Ankle", cue: "Keep the landing knee tracking directly over second toe; avoid caving inward." },
+      { joint: "Hips & Pelvis", cue: "Hinge hips slightly back to absorb shock through the gluteals, not the knee joint." },
+      { joint: "Chest & Spine", cue: "Maintain a long, active spine with proud chest throughout each lateral hop." }
+    ],
+    commonMistakes: [
+      { mistake: "Landing with a rigid, straight knee", correction: "Land softly with a flexed knee and ankle to disperse force." },
+      { mistake: "Rounding lower back", correction: "Keep chest lifted and core braced throughout the jump." }
+    ],
+    modifications: {
+      beginner: "Perform lateral step-behinds without the airborne jump to protect joints.",
+      advanced: "Add depth to the landing with a low skater crouch touching the floor.",
+      propUsage: "Use a floor line or yoga mat width as a visual distance target."
+    },
+    kinematics: {
+      headTilt: 0,
+      neckAngle: 0,
+      spineCurve: 0.1,
+      torsoAngle: 20,
+      pelvisTilt: 10,
+      leftShoulderAngle: 45,
+      leftElbowAngle: 60,
+      leftWristAngle: 0,
+      rightShoulderAngle: -30,
+      rightElbowAngle: 45,
+      rightWristAngle: 0,
+      leftHipAngle: 30,
+      leftKneeAngle: 75,
+      leftAnkleAngle: 20,
+      rightHipAngle: -25,
+      rightKneeAngle: 30,
+      rightAnkleAngle: 10,
+      elevationY: 0,
+      symmetry: false,
+      facing: "front",
+      poseArchetype: "skaterJump"
+    }
+  },
+  {
+    id: "knee-to-elbow-crunches",
+    name: "Knee To Elbow Crunches",
+    sanskritName: "Janu Kurpara Asana",
+    englishPronunciation: "nee-too-EL-boh krunch",
+    category: "standing",
+    difficulty: "beginner",
+    primaryMuscles: ["coreAbdominals", "hipFlexors"],
+    secondaryMuscles: ["glutes", "quadriceps", "deltoidsShoulders"],
+    benefits: ["coreStrength", "digestion", "energyBoost", "deskPosturedetox"],
+    recommendedHoldSeconds: 36,
+    description: "An upright standing core activator that trains oblique rotation, pelvic stability, and reciprocal limb coordination without spinal compression.",
+    stepByStepInstructions: [
+      "Stand tall with feet hip-distance apart and fingertips gently touching behind your ears.",
+      "Root into your left foot, lift the right knee up diagonally across your torso.",
+      "Simultaneously twist your torso to bring the left elbow toward the rising right knee.",
+      "Contract the abdominal obliques deeply at the peak for 1 second.",
+      "Lower under control to standing and alternate smoothly to the opposite side."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale to return to standing, lengthening the spine and opening elbows wide.",
+      exhaleAction: "Exhale forcefully as the knee and opposite elbow meet across the midline.",
+      holdNotes: "Keep the movement controlled and rhythmic for 36 seconds."
+    },
+    alignmentCues: [
+      { joint: "Cervical Neck", cue: "Do not pull on the neck or head with your hands; hands are light guides." },
+      { joint: "Spine & Core", cue: "Drive the movement by lifting the knee high rather than excessively collapsing the chest." },
+      { joint: "Standing Leg", cue: "Micro-bend the standing knee to keep the pelvis level and stable." }
+    ],
+    commonMistakes: [
+      { mistake: "Cranking the neck forward with fingers", correction: "Keep elbows wide and initiate twist strictly from the ribcage." },
+      { mistake: "Rushing without core engagement", correction: "Pause briefly when knee meets elbow to feel the oblique contraction." }
+    ],
+    modifications: {
+      beginner: "Perform while seated on a sturdy chair or reduce the range of motion.",
+      advanced: "Add a hop on the standing foot between alternating repetitions.",
+      propUsage: "Hold a light yoga block between hands to maintain broad shoulder alignment."
+    },
+    kinematics: {
+      headTilt: 5,
+      neckAngle: 0,
+      spineCurve: -0.2,
+      torsoAngle: 10,
+      pelvisTilt: -5,
+      leftShoulderAngle: 70,
+      leftElbowAngle: 110,
+      leftWristAngle: 0,
+      rightShoulderAngle: 70,
+      rightElbowAngle: 110,
+      rightWristAngle: 0,
+      leftHipAngle: 0,
+      leftKneeAngle: 5,
+      leftAnkleAngle: 0,
+      rightHipAngle: 90,
+      rightKneeAngle: 90,
+      rightAnkleAngle: 10,
+      elevationY: 0,
+      symmetry: false,
+      facing: "front",
+      poseArchetype: "kneeToElbow"
+    }
+  },
+  {
+    id: "sumo-squat-leg-raises",
+    name: "Sumo Squat & Leg Raises",
+    sanskritName: "Utkata Konasana Utthita",
+    englishPronunciation: "SOO-moh skwaht leg rayz",
+    category: "standing",
+    difficulty: "intermediate",
+    primaryMuscles: ["glutes", "quadriceps", "hipFlexors"],
+    secondaryMuscles: ["coreAbdominals", "calvesAnkles", "hamstrings"],
+    benefits: ["hipMobility", "lowerBackPain", "energyBoost", "runnersRecovery"],
+    recommendedHoldSeconds: 36,
+    description: "A wide-stance lower body powerhouse that opens the adductors during the sumo squat and isolates the gluteus medius during the lateral leg raise.",
+    stepByStepInstructions: [
+      "Take a wide stance with feet roughly 3 to 4 feet apart, toes turned outward at 45 degrees.",
+      "Inhale, sit back and down into a deep sumo squat until thighs are roughly parallel to the mat.",
+      "Keep chest upright and press knees outward in the direction of the toes.",
+      "Exhale and drive through heels to stand, immediately transferring weight to the left leg.",
+      "Raise the right leg laterally to the side while keeping toes pointed forward, then return to squat and alternate."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale deeply as you lower into the wide sumo squat.",
+      exhaleAction: "Exhale powerfully as you rise and abduct the leg to the side.",
+      holdNotes: "Focus on squeezing the outer hip at the peak of each lateral raise."
+    },
+    alignmentCues: [
+      { joint: "Knees & Toes", cue: "Knees must track in the exact same vector as your turned-out feet." },
+      { joint: "Pelvis & Lumbar", cue: "Keep torso vertical; avoid tipping excessively forward in the squat." },
+      { joint: "Lifted Leg", cue: "Lead with the outside of the heel to isolate gluteus medius." }
+    ],
+    commonMistakes: [
+      { mistake: "Letting knees cave inward during squat", correction: "Actively engage external rotators to pull knees wide." },
+      { mistake: "Tipping torso sideways during leg lift", correction: "Keep core tight and shoulders level as leg lifts." }
+    ],
+    modifications: {
+      beginner: "Reduce squat depth to 45 degrees and perform smaller leg raises.",
+      advanced: "Hold the bottom squat for 2 seconds before each explosive leg raise.",
+      propUsage: "Place fingertips on a chair or wall for enhanced lateral balance."
+    },
+    kinematics: {
+      headTilt: 0,
+      neckAngle: 0,
+      spineCurve: 0,
+      torsoAngle: 5,
+      pelvisTilt: 0,
+      leftShoulderAngle: 30,
+      leftElbowAngle: 45,
+      leftWristAngle: 0,
+      rightShoulderAngle: 30,
+      rightElbowAngle: 45,
+      rightWristAngle: 0,
+      leftHipAngle: 35,
+      leftKneeAngle: 60,
+      leftAnkleAngle: 15,
+      rightHipAngle: 45,
+      rightKneeAngle: 20,
+      rightAnkleAngle: 0,
+      elevationY: 0,
+      symmetry: false,
+      facing: "front",
+      poseArchetype: "sumoSquat"
+    }
+  },
+  {
+    id: "wall-push-ups",
+    name: "Wall Push-Ups",
+    sanskritName: "Bhitti Dandasana",
+    englishPronunciation: "wawl push-up",
+    category: "standing",
+    difficulty: "beginner",
+    primaryMuscles: ["pectoralisChest", "deltoidsShoulders", "latissimusDorsi"],
+    secondaryMuscles: ["coreAbdominals", "erectorSpinae", "calvesAnkles"],
+    benefits: ["deskPosturedetox", "coreStrength", "stressRelief"],
+    recommendedHoldSeconds: 36,
+    description: "An accessible, low-impact upper body strengthening exercise that restores scapular rhythm, builds chest and shoulder resilience, and maintains a solid core plank.",
+    stepByStepInstructions: [
+      "Stand facing a flat wall about an arm's length away, feet hip-width apart.",
+      "Place palms flat on the wall slightly wider than shoulder-width, at shoulder height.",
+      "Engage your core and glutes so your body forms a straight diagonal line from heels to crown.",
+      "Inhale, bend elbows at a 45-degree angle to bring chest toward the wall until nose almost touches.",
+      "Exhale and press firmly through palms to return to the starting position."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale as you slowly bend your elbows and lower chest toward the wall.",
+      exhaleAction: "Exhale as you push the wall away, drawing the lower belly in.",
+      holdNotes: "Maintain smooth 2-second lowering and 2-second pressing cadence."
+    },
+    alignmentCues: [
+      { joint: "Elbows", cue: "Keep elbows angled at 45 degrees relative to torso; avoid flaring straight out." },
+      { joint: "Spine & Core", cue: "Do not sag or arch your lower back; maintain a rigid plank alignment." },
+      { joint: "Shoulder Blades", cue: "Glide shoulder blades smoothly together on descent, protract on push." }
+    ],
+    commonMistakes: [
+      { mistake: "Arching lower back and leaving hips behind", correction: "Keep glutes and abdominals engaged so hips move with chest." },
+      { mistake: "Shrugging shoulders into ears", correction: "Press shoulders down away from ears throughout." }
+    ],
+    modifications: {
+      beginner: "Stand closer to the wall to decrease the load.",
+      advanced: "Step feet farther back or perform single-arm wall push-ups.",
+      propUsage: "Place hands on a countertop or sturdy bar for progressive difficulty."
+    },
+    kinematics: {
+      headTilt: 0,
+      neckAngle: 0,
+      spineCurve: 0,
+      torsoAngle: 20,
+      pelvisTilt: 0,
+      leftShoulderAngle: 60,
+      leftElbowAngle: 75,
+      leftWristAngle: 70,
+      rightShoulderAngle: 60,
+      rightElbowAngle: 75,
+      rightWristAngle: 70,
+      leftHipAngle: -10,
+      leftKneeAngle: 0,
+      leftAnkleAngle: 20,
+      rightHipAngle: -10,
+      rightKneeAngle: 0,
+      rightAnkleAngle: 20,
+      elevationY: 0,
+      symmetry: true,
+      facing: "side",
+      poseArchetype: "wallPushUp"
+    }
+  },
+  {
+    id: "curtsy-lunges",
+    name: "Curtsy Lunges",
+    sanskritName: "Prashrita Lunge",
+    englishPronunciation: "KERT-see lunj",
+    category: "standing",
+    difficulty: "intermediate",
+    primaryMuscles: ["glutes", "quadriceps", "hamstrings"],
+    secondaryMuscles: ["coreAbdominals", "calvesAnkles", "hipFlexors"],
+    benefits: ["hipMobility", "runnersRecovery", "coreStrength", "lowerBackPain"],
+    recommendedHoldSeconds: 36,
+    description: "A functional multidirectional lunge targeting the gluteus medius, adductors, and stabilizing stabilizers across the pelvic girdle and knees.",
+    stepByStepInstructions: [
+      "Stand tall with feet hip-width apart and hands clasped at your chest.",
+      "Step your right leg back diagonally behind your left leg, as if performing a graceful curtsy.",
+      "Bend both knees to lower your hips toward the floor until your front left thigh is parallel to the ground.",
+      "Ensure your front knee stays tracked over your front ankle.",
+      "Push through the front left heel to return to standing, then repeat on the opposite side."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale as you step back diagonally and lower your hips.",
+      exhaleAction: "Exhale and drive through the front heel to return to tall standing posture.",
+      holdNotes: "Maintain fluid alternating rhythm for 36 seconds."
+    },
+    alignmentCues: [
+      { joint: "Front Knee", cue: "Keep front knee pointing straight ahead over your toes; do not let it collapse inward." },
+      { joint: "Hips & Pelvis", cue: "Keep hips square to the front of the mat as much as possible." },
+      { joint: "Chest", cue: "Keep chest proud and shoulders pulled back." }
+    ],
+    commonMistakes: [
+      { mistake: "Stepping too far sideways causing front knee twist", correction: "Step back at a comfortable 45-degree angle." },
+      { mistake: "Tipping torso forward over knee", correction: "Keep spine tall and lower straight down through the hips." }
+    ],
+    modifications: {
+      beginner: "Perform reverse lunges straight back before advancing to cross-back curtsy.",
+      advanced: "Add a knee drive at the top before stepping into the next repetition.",
+      propUsage: "Hold light dumbbells or a yoga block at the chest for added resistance."
+    },
+    kinematics: {
+      headTilt: 0,
+      neckAngle: 0,
+      spineCurve: 0,
+      torsoAngle: 5,
+      pelvisTilt: 0,
+      leftShoulderAngle: 25,
+      leftElbowAngle: 80,
+      leftWristAngle: 0,
+      rightShoulderAngle: 25,
+      rightElbowAngle: 80,
+      rightWristAngle: 0,
+      leftHipAngle: 75,
+      leftKneeAngle: 85,
+      leftAnkleAngle: 10,
+      rightHipAngle: -20,
+      rightKneeAngle: 80,
+      rightAnkleAngle: 30,
+      elevationY: 0,
+      symmetry: false,
+      facing: "front",
+      poseArchetype: "curtsyLunge"
+    }
+  },
+  {
+    id: "wall-sit",
+    name: "Wall Sit",
+    sanskritName: "Bhitti Upaveshasana",
+    englishPronunciation: "wawl sit",
+    category: "standing",
+    difficulty: "beginner",
+    primaryMuscles: ["quadriceps", "glutes", "calvesAnkles"],
+    secondaryMuscles: ["coreAbdominals", "hamstrings", "erectorSpinae"],
+    benefits: ["runnersRecovery", "energyBoost", "coreStrength", "lowerBackPain"],
+    recommendedHoldSeconds: 36,
+    description: "An isometric quad and pelvic stabilizer hold against a wall that builds muscular endurance, joint health in the knees, and mental resilience.",
+    stepByStepInstructions: [
+      "Stand with your back flat against a sturdy wall, feet about 2 feet away from the wall.",
+      "Slide down the wall until your thighs are parallel to the floor, forming 90-degree angles at knees and hips.",
+      "Ensure your knees are directly above your ankles, not extending past your toes.",
+      "Press your entire back—lower back, mid back, and shoulders—firmly into the wall.",
+      "Rest hands on your thighs or extend them forward, breathing steadily for the duration."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale deeply into the diaphragm, keeping lower back pressed into the wall.",
+      exhaleAction: "Exhale slowly, grounding feet firmly into the floor.",
+      holdNotes: "Stay calm and breathe steadily through isometric quad burn."
+    },
+    alignmentCues: [
+      { joint: "Knees & Ankles", cue: "Stack knees directly over ankles at a clean 90-degree bend." },
+      { joint: "Lumbar Spine", cue: "Press lumbar spine flat against wall to avoid hyperextending lower back." },
+      { joint: "Feet", cue: "Root firmly into heels and big toe knuckles." }
+    ],
+    commonMistakes: [
+      { mistake: "Knees drifting past toes", correction: "Step feet further out so shins remain vertical." },
+      { mistake: "Resting hands heavily on knees", correction: "Keep hands loose at sides, on chest, or extended forward." }
+    ],
+    modifications: {
+      beginner: "Slide down to a higher 45-degree knee angle rather than full 90 degrees.",
+      advanced: "Perform alternating single-leg heel lifts while holding the wall sit.",
+      propUsage: "Squeeze a yoga block between knees to engage inner adductors."
+    },
+    kinematics: {
+      headTilt: 0,
+      neckAngle: 0,
+      spineCurve: 0,
+      torsoAngle: 0,
+      pelvisTilt: 0,
+      leftShoulderAngle: 10,
+      leftElbowAngle: 0,
+      leftWristAngle: 0,
+      rightShoulderAngle: 10,
+      rightElbowAngle: 0,
+      rightWristAngle: 0,
+      leftHipAngle: 90,
+      leftKneeAngle: 90,
+      leftAnkleAngle: 0,
+      rightHipAngle: 90,
+      rightKneeAngle: 90,
+      rightAnkleAngle: 0,
+      elevationY: 0,
+      symmetry: true,
+      facing: "side",
+      poseArchetype: "wallSit"
+    }
+  },
+  {
+    id: "elbows-back",
+    name: "Elbows Back",
+    sanskritName: "Prshtha Kurpara",
+    englishPronunciation: "EL-bohz bak",
+    category: "standing",
+    difficulty: "beginner",
+    primaryMuscles: ["latissimusDorsi", "pectoralisChest", "deltoidsShoulders"],
+    secondaryMuscles: ["erectorSpinae", "cervicalNeck", "coreAbdominals"],
+    benefits: ["deskPosturedetox", "stressRelief", "spineFlexibility"],
+    recommendedHoldSeconds: 36,
+    description: "A postural resetting movement that opens tight pectoral muscles, activates the rhomboids and middle trapezius, and reverses forward head slouch.",
+    stepByStepInstructions: [
+      "Stand tall in Mountain Pose with feet grounded and spine long.",
+      "Raise arms to chest height with elbows bent at 90 degrees and palms facing down or in.",
+      "Inhale and drive your elbows forcefully backward, retracting and squeezing your shoulder blades together.",
+      "Open and expand your chest toward the ceiling without hyperextending your lower back.",
+      "Exhale and smoothly return arms forward, maintaining rhythmic scapular retraction."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale to pull elbows back and inflate the upper chest with oxygen.",
+      exhaleAction: "Exhale to release arms forward, softening the shoulders down.",
+      holdNotes: "Focus on deep scapular pinching on every backward pulse."
+    },
+    alignmentCues: [
+      { joint: "Shoulder Blades", cue: "Squeeze rhomboids together behind your heart on every backward drive." },
+      { joint: "Ribcage & Core", cue: "Knit front ribs together to prevent excessive lumbar arching." },
+      { joint: "Cervical Neck", cue: "Keep chin slightly tucked and crown reaching high." }
+    ],
+    commonMistakes: [
+      { mistake: "Flaring ribs forward and arching lower back", correction: "Keep core firm so movement stays in upper thoracic spine." },
+      { mistake: "Shrugging shoulders into neck", correction: "Roll shoulders down and back away from ears." }
+    ],
+    modifications: {
+      beginner: "Perform seated on a chair or with hands rested on shoulders.",
+      advanced: "Hold a resistance band or towel between hands with isometric tension.",
+      propUsage: "Practice with your back against a wall to monitor spine alignment."
+    },
+    kinematics: {
+      headTilt: 0,
+      neckAngle: 0,
+      spineCurve: 0.1,
+      torsoAngle: 0,
+      pelvisTilt: 0,
+      leftShoulderAngle: -35,
+      leftElbowAngle: 90,
+      leftWristAngle: 0,
+      rightShoulderAngle: -35,
+      rightElbowAngle: 90,
+      rightWristAngle: 0,
+      leftHipAngle: 0,
+      leftKneeAngle: 0,
+      leftAnkleAngle: 0,
+      rightHipAngle: 0,
+      rightKneeAngle: 0,
+      rightAnkleAngle: 0,
+      elevationY: 0,
+      symmetry: true,
+      facing: "front",
+      poseArchetype: "elbowsBack"
+    }
+  },
+  {
+    id: "90-90-crunch",
+    name: "90/90 Crunch",
+    sanskritName: "Konasana Abdominal",
+    englishPronunciation: "NYN-tee NYN-tee krunch",
+    category: "seatedRestorative",
+    difficulty: "beginner",
+    primaryMuscles: ["coreAbdominals", "hipFlexors"],
+    secondaryMuscles: ["erectorSpinae", "quadriceps"],
+    benefits: ["coreStrength", "lowerBackPain", "deskPosturedetox"],
+    recommendedHoldSeconds: 36,
+    description: "A spine-safe supine core flexion movement that isolates the rectus abdominis while keeping the pelvis locked in a neutral 90-degree tabletop position.",
+    stepByStepInstructions: [
+      "Lie on your back on your mat with knees and hips bent at 90 degrees in tabletop position.",
+      "Place fingertips lightly behind your head with elbows wide.",
+      "Inhale, press your lower back firmly into the floor to activate transversus abdominis.",
+      "Exhale and curl your head, neck, and shoulder blades off the mat toward your knees.",
+      "Hold the peak contraction for 1 second, then lower slowly with control."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale to lower shoulder blades toward the mat without arching lower back.",
+      exhaleAction: "Exhale forcefully to curl upward, hollowing the abdominal wall.",
+      holdNotes: "Maintain steady legs in pure 90/90 tabletop throughout."
+    },
+    alignmentCues: [
+      { joint: "Knees & Hips", cue: "Keep knees directly over hips and shins parallel to ceiling." },
+      { joint: "Lumbar Spine", cue: "Maintain zero space between your lower back and the mat." },
+      { joint: "Neck & Chin", cue: "Keep space of an apple between chin and chest; do not pull on neck." }
+    ],
+    commonMistakes: [
+      { mistake: "Tucking knees toward chest to cheat", correction: "Keep knees stacked strictly over hips at 90 degrees." },
+      { mistake: "Yanking on head with hands", correction: "Keep elbows wide and curl up from ribcage contraction." }
+    ],
+    modifications: {
+      beginner: "Rest calves on a chair or bench in 90/90 position while crunching.",
+      advanced: "Reach arms forward past hips at the peak and hold for 2 seconds.",
+      propUsage: "Place a yoga block between knees to activate pelvic floor."
+    },
+    kinematics: {
+      headTilt: 20,
+      neckAngle: 15,
+      spineCurve: -0.4,
+      torsoAngle: 0,
+      pelvisTilt: -10,
+      leftShoulderAngle: 45,
+      leftElbowAngle: 100,
+      leftWristAngle: 0,
+      rightShoulderAngle: 45,
+      rightElbowAngle: 100,
+      rightWristAngle: 0,
+      leftHipAngle: 90,
+      leftKneeAngle: 90,
+      leftAnkleAngle: 0,
+      rightHipAngle: 90,
+      rightKneeAngle: 90,
+      rightAnkleAngle: 0,
+      elevationY: 2,
+      symmetry: true,
+      facing: "side",
+      poseArchetype: "crunch9090"
+    }
   }
 ];
 

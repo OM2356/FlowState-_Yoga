@@ -107,7 +107,15 @@ export interface HumanPoseKinematics {
     | "malasana"
     | "goddess"
     | "catCow"
-    | "fishPose";
+    | "fishPose"
+    | "skaterJump"
+    | "kneeToElbow"
+    | "sumoSquat"
+    | "wallPushUp"
+    | "curtsyLunge"
+    | "wallSit"
+    | "elbowsBack"
+    | "crunch9090";
 }
 
 export interface YogaPose {

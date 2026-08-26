@@ -534,7 +534,284 @@ export const AnimatedPoseFigure: React.FC<AnimatedPoseFigureProps> = ({
     }
 
     // ==========================================
-    // 15. DEFAULT: MOUNTAIN POSE (Tadasana) & PRANAYAMA BREATH FLOW
+    // 15. SKATER JUMP (Lateral Bounds)
+    // ==========================================
+    if (normId.includes("skater") || normId.includes("skate")) {
+      const boundX = Math.sin((frame / 120) * Math.PI * 2) * 26;
+      const boundHop = Math.abs(Math.sin((frame / 120) * Math.PI * 2)) * 14;
+      const legSweep = Math.cos((frame / 120) * Math.PI * 2) * 30;
+      return (
+        <g transform={`translate(${140 + boundX}, ${110 - boundHop})`}>
+          <ellipse cx={-boundX * 0.4} cy={66 + boundHop} rx="80" ry="10" fill={floorMat} />
+          
+          {/* Landing Bent Leg */}
+          <line x1="0" y1="12" x2="8" y2={40 + boundHop * 0.2} stroke={skin} strokeWidth="13" strokeLinecap="round" />
+          <line x1="8" y1={40 + boundHop * 0.2} x2="4" y2={64 + boundHop} stroke={skin} strokeWidth="12" strokeLinecap="round" />
+          <circle cx="4" cy={65 + boundHop} r="6" fill={shoes} />
+
+          {/* Trailing diagonal Leg behind body */}
+          <line x1="0" y1="12" x2={-legSweep} y2="42" stroke={skin} strokeWidth="11" strokeLinecap="round" />
+          <circle cx={-legSweep} cy="42" r="5" fill={shoes} />
+
+          {/* Torso athletic forward hinge */}
+          <ellipse cx="0" cy="10" rx="14" ry="10" fill={shorts} />
+          <path d="M-10,10 L-6,-24 L10,-22 L8,10 Z" fill={shirt} />
+          <circle cx="2" cy="-34" r="10" fill={skin} />
+          <path d="M-4,-40 Q4,-44 10,-38 Z" fill="#2E241E" />
+
+          {/* Arms swinging cross-body for counterbalance */}
+          <line x1="-8" y1="-18" x2={18 + boundX * 0.4} y2="4" stroke={shirt} strokeWidth="8" strokeLinecap="round" />
+          <circle cx={18 + boundX * 0.4} cy="4" r="4" fill={skin} />
+          <line x1="8" y1="-18" x2={-22 - boundX * 0.4} y2="-10" stroke={shirt} strokeWidth="8" strokeLinecap="round" />
+          <circle cx={-22 - boundX * 0.4} cy="-10" r="4" fill={skin} />
+        </g>
+      );
+    }
+
+    // ==========================================
+    // 16. KNEE TO ELBOW CRUNCHES
+    // ==========================================
+    if (normId.includes("kneetoelbow") || normId.includes("kneetoelbowcrunch") || (normId.includes("knee") && normId.includes("elbow"))) {
+      const crunchCycle = Math.sin((frame / 120) * Math.PI * 2);
+      const kneeLift = Math.max(0, crunchCycle) * 36;
+      const elbowDrop = Math.max(0, crunchCycle) * 18;
+      return (
+        <g transform="translate(140, 105)">
+          <ellipse cx="0" cy="68" rx="65" ry="9" fill={floorMat} />
+
+          {/* Standing Leg (Left) */}
+          <line x1="-10" y1="16" x2="-10" y2="66" stroke={skin} strokeWidth="12" strokeLinecap="round" />
+          <circle cx="-10" cy="67" r="6" fill={shoes} />
+
+          {/* Rising Diagonal Knee (Right) */}
+          <line x1="10" y1="16" x2={20 - kneeLift * 0.3} y2={50 - kneeLift} stroke={skin} strokeWidth="12" strokeLinecap="round" />
+          <line x1={20 - kneeLift * 0.3} y1={50 - kneeLift} x2={22 - kneeLift * 0.4} y2={70 - kneeLift * 0.6} stroke={skin} strokeWidth="10" strokeLinecap="round" />
+          <circle cx={22 - kneeLift * 0.4} cy={70 - kneeLift * 0.6} r="5" fill={shoes} />
+
+          {/* Torso Twisting toward Rising Knee */}
+          <g transform={`rotate(${elbowDrop * 0.6}, 0, 10)`}>
+            <rect x="-12" y="8" width="24" height="20" rx="3" fill={shorts} />
+            <path d="M-12,10 L-9,-24 L9,-24 L12,10 Z" fill={shirt} />
+            <circle cx="0" cy="-34" r="10" fill={skin} />
+            <path d="M-8,-40 Q0,-44 8,-40 Z" fill="#2E241E" />
+
+            {/* Hands behind ears, left elbow driving down and across */}
+            <path d={`M-9,-22 L-22,${-30 + elbowDrop} L-8,-36`} fill="none" stroke={shirt} strokeWidth="8" strokeLinecap="round" />
+            <path d="M9,-22 L22,-30 L8,-36" fill="none" stroke={shirt} strokeWidth="8" strokeLinecap="round" />
+          </g>
+        </g>
+      );
+    }
+
+    // ==========================================
+    // 17. SUMO SQUAT & LEG RAISES
+    // ==========================================
+    if (normId.includes("sumosquat") || (normId.includes("sumo") && normId.includes("leg")) || normId.includes("legraise")) {
+      const cycle = Math.sin((frame / 120) * Math.PI * 2);
+      const isSquat = cycle < 0;
+      const squatDepth = Math.abs(Math.min(0, cycle)) * 22;
+      const legAbduct = Math.max(0, cycle) * 38;
+
+      return (
+        <g transform={`translate(140, ${105 + squatDepth})`}>
+          <ellipse cx="0" cy={68 - squatDepth} rx="85" ry="10" fill={floorMat} />
+
+          {/* Left Wide Rooted Leg */}
+          <line x1="-12" y1="16" x2="-40" y2={35 - squatDepth * 0.2} stroke={skin} strokeWidth="13" strokeLinecap="round" />
+          <line x1="-40" y1={35 - squatDepth * 0.2} x2="-45" y2={66 - squatDepth} stroke={skin} strokeWidth="12" strokeLinecap="round" />
+          <circle cx="-45" cy={66 - squatDepth} r="6" fill={shoes} />
+
+          {/* Right Leg: Wide in Squat OR Lateral Raise */}
+          {isSquat ? (
+            <>
+              <line x1="12" y1="16" x2="40" y2={35 - squatDepth * 0.2} stroke={skin} strokeWidth="13" strokeLinecap="round" />
+              <line x1="40" y1={35 - squatDepth * 0.2} x2="45" y2={66 - squatDepth} stroke={skin} strokeWidth="12" strokeLinecap="round" />
+              <circle cx="45" cy={66 - squatDepth} r="6" fill={shoes} />
+            </>
+          ) : (
+            <>
+              <line x1="12" y1="16" x2={25 + legAbduct} y2={45 - legAbduct * 0.7} stroke={skin} strokeWidth="12" strokeLinecap="round" />
+              <line x1={25 + legAbduct} y1={45 - legAbduct * 0.7} x2={45 + legAbduct * 1.2} y2={50 - legAbduct} stroke={skin} strokeWidth="11" strokeLinecap="round" />
+              <circle cx={45 + legAbduct * 1.2} cy={50 - legAbduct} r="5.5" fill={shoes} />
+            </>
+          )}
+
+          {/* Torso & Arms Clasped at Chest */}
+          <rect x="-14" y="8" width="28" height="20" rx="3" fill={shorts} />
+          <path d="M-12,10 L-9,-24 L9,-24 L12,10 Z" fill={shirt} />
+          <circle cx="0" cy="-34" r="10" fill={skin} />
+          <path d="M-8,-40 Q0,-44 8,-40 Z" fill="#2E241E" />
+          
+          <path d="M-10,-20 L-4,-4 L4,-4 L10,-20" fill="none" stroke={shirt} strokeWidth="8" strokeLinecap="round" />
+          <circle cx="0" cy="-4" r="4.5" fill={skin} />
+        </g>
+      );
+    }
+
+    // ==========================================
+    // 18. WALL PUSH-UPS
+    // ==========================================
+    if (normId.includes("wallpush") || (normId.includes("wall") && normId.includes("push"))) {
+      const pushCycle = t01 * 24;
+      return (
+        <g transform="translate(140, 110)">
+          {/* Wall on the Left */}
+          <rect x="-70" y="-70" width="8" height="145" rx="3" fill="#94A3B8" />
+          <line x1="-70" y1="70" x2="80" y2="70" stroke={floorLine} strokeWidth="2" />
+
+          {/* Feet Anchored Back at right */}
+          <circle cx="45" cy="68" r="6" fill={shoes} />
+
+          {/* Straight Plank Body Diagonally Angling to Wall */}
+          {/* Legs */}
+          <line x1="45" y1="65" x2={25 - pushCycle * 0.3} y2={25 - pushCycle * 0.1} stroke={skin} strokeWidth="12" strokeLinecap="round" />
+          {/* Shorts & Torso */}
+          <ellipse cx={25 - pushCycle * 0.3} cy={25 - pushCycle * 0.1} rx="12" ry="9" fill={shorts} />
+          <line x1={25 - pushCycle * 0.3} y1={25 - pushCycle * 0.1} x2={-10 - pushCycle * 0.6} y2={-15} stroke={shirt} strokeWidth="18" strokeLinecap="round" />
+
+          {/* Head */}
+          <circle cx={-18 - pushCycle * 0.6} cy="-22" r="9.5" fill={skin} />
+          <path d="M-24,-28 Q-18,-32 -12,-26 Z" fill="#2E241E" />
+
+          {/* Arms Pressing against Wall at (-62, -15) */}
+          <line x1={-10 - pushCycle * 0.6} y1="-15" x2={-38 - pushCycle * 0.2} y2={-5 + pushCycle * 0.3} stroke={shirt} strokeWidth="8" strokeLinecap="round" />
+          <line x1={-38 - pushCycle * 0.2} y1={-5 + pushCycle * 0.3} x2="-62" y2="-15" stroke={skin} strokeWidth="8" strokeLinecap="round" />
+          <circle cx="-62" cy="-15" r="4.5" fill={skin} />
+        </g>
+      );
+    }
+
+    // ==========================================
+    // 19. CURTSY LUNGES
+    // ==========================================
+    if (normId.includes("curtsy") || normId.includes("curtsylunge")) {
+      const curtsyDip = t01 * 18;
+      const legCross = Math.sin((frame / 120) * Math.PI * 2) * 20;
+      return (
+        <g transform={`translate(140, ${105 + curtsyDip})`}>
+          <ellipse cx="0" cy={68 - curtsyDip} rx="75" ry="9" fill={floorMat} />
+
+          {/* Front Rooted Leg (Left) */}
+          <line x1="-6" y1="14" x2="-25" y2="28" stroke={skin} strokeWidth="13" strokeLinecap="round" />
+          <line x1="-25" y1="28" x2="-25" y2={66 - curtsyDip} stroke={skin} strokeWidth="12" strokeLinecap="round" />
+          <circle cx="-25" cy={66 - curtsyDip} r="6" fill={shoes} />
+
+          {/* Back Cross-Diagonal Curtsy Leg */}
+          <line x1="6" y1="14" x2={-20 + legCross} y2="40" stroke={skin} strokeWidth="11" strokeLinecap="round" />
+          <line x1={-20 + legCross} y1="40" x2={-32 + legCross} y2={64 - curtsyDip} stroke={skin} strokeWidth="10" strokeLinecap="round" />
+          <circle cx={-32 + legCross} cy={64 - curtsyDip} r="5" fill={shoes} />
+
+          {/* Torso & Clasped Hands */}
+          <rect x="-12" y="8" width="24" height="18" rx="3" fill={shorts} />
+          <path d="M-11,10 L-8,-24 L8,-24 L11,10 Z" fill={shirt} />
+          <circle cx="0" cy="-34" r="10" fill={skin} />
+          <path d="M-8,-40 Q0,-44 8,-40 Z" fill="#2E241E" />
+          
+          <path d="M-8,-20 L-2,-6 L2,-6 L8,-20" fill="none" stroke={shirt} strokeWidth="8" strokeLinecap="round" />
+          <circle cx="0" cy="-6" r="4" fill={skin} />
+        </g>
+      );
+    }
+
+    // ==========================================
+    // 20. WALL SIT (Isometric Quad Hold)
+    // ==========================================
+    if (normId.includes("wallsit") || (normId.includes("wall") && normId.includes("sit"))) {
+      const breathSit = t01 * 3;
+      return (
+        <g transform={`translate(140, ${108 + breathSit})`}>
+          {/* Wall on the Right */}
+          <rect x="25" y="-55" width="8" height="130" rx="2" fill="#94A3B8" />
+          <line x1="-70" y1="70 - breathSit" x2="35" y2="70 - breathSit" stroke={floorLine} strokeWidth="2" />
+
+          {/* Feet Anchored Forward */}
+          <circle cx="-35" cy={68 - breathSit} r="6" fill={shoes} />
+          {/* Vertical Shins */}
+          <line x1="-35" y1={66 - breathSit} x2="-35" y2="30" stroke={skin} strokeWidth="12" strokeLinecap="round" />
+
+          {/* Horizontal Thighs backed against Wall */}
+          <line x1="-35" y1="30" x2="20" y2="30" stroke={skin} strokeWidth="13" strokeLinecap="round" />
+          <ellipse cx="18" cy="30" rx="14" ry="10" fill={shorts} />
+
+          {/* Vertical Torso flat against Wall */}
+          <path d="M12,28 L12,-22 L24,-22 L24,28 Z" fill={shirt} />
+          <circle cx="18" cy="-32" r="10" fill={skin} />
+          <path d="M10,-38 Q18,-42 24,-36 Z" fill="#2E241E" />
+
+          {/* Arms resting on thighs */}
+          <line x1="14" y1="-18" x2="-10" y2="22" stroke={shirt} strokeWidth="8" strokeLinecap="round" />
+          <circle cx="-12" cy="22" r="4.5" fill={skin} />
+        </g>
+      );
+    }
+
+    // ==========================================
+    // 21. ELBOWS BACK (Chest & Scapula Opener)
+    // ==========================================
+    if (normId.includes("elbowsback") || (normId.includes("elbow") && normId.includes("back"))) {
+      const retraction = t01 * 22;
+      return (
+        <g transform="translate(140, 105)">
+          <ellipse cx="0" cy="70" rx="65" ry="9" fill={floorMat} />
+
+          {/* Standing Legs in Mountain */}
+          <line x1="-10" y1="18" x2="-10" y2="68" stroke={skin} strokeWidth="12" strokeLinecap="round" />
+          <circle cx="-10" cy="69" r="6" fill={shoes} />
+          <line x1="10" y1="18" x2="10" y2="68" stroke={skin} strokeWidth="12" strokeLinecap="round" />
+          <circle cx="10" cy="69" r="6" fill={shoes} />
+
+          {/* Torso & Open Chest */}
+          <rect x="-14" y="10" width="28" height="20" rx="3" fill={shorts} />
+          <path d="M-12,12 L-10,-24 L10,-24 L12,12 Z" fill={shirt} />
+          <circle cx="0" cy="-35" r="10" fill={skin} />
+          <path d="M-8,-40 Q0,-45 8,-40 Z" fill="#2E241E" />
+
+          {/* Arms driving elbows deep back */}
+          {/* Left Arm */}
+          <line x1="-10" y1="-18" x2={-32 - retraction * 0.4} y2="-18" stroke={shirt} strokeWidth="9" strokeLinecap="round" />
+          <line x1={-32 - retraction * 0.4} y1="-18" x2={-24 - retraction * 0.3} y2="-2" stroke={skin} strokeWidth="8" strokeLinecap="round" />
+          <circle cx={-24 - retraction * 0.3} cy="-2" r="4" fill={skin} />
+
+          {/* Right Arm */}
+          <line x1="10" y1="-18" x2={32 + retraction * 0.4} y2="-18" stroke={shirt} strokeWidth="9" strokeLinecap="round" />
+          <line x1={32 + retraction * 0.4} y1="-18" x2={24 + retraction * 0.3} y2="-2" stroke={skin} strokeWidth="8" strokeLinecap="round" />
+          <circle cx={24 + retraction * 0.3} cy="-2" r="4" fill={skin} />
+        </g>
+      );
+    }
+
+    // ==========================================
+    // 22. 90/90 CRUNCH (Tabletop Core Crunch)
+    // ==========================================
+    if (normId.includes("9090") || normId.includes("9090crunch") || normId.includes("tabletopcrunch")) {
+      const crunchLift = t01 * 18;
+      return (
+        <g transform="translate(140, 115)">
+          <ellipse cx="0" cy="55" rx="85" ry="10" fill={floorMat} />
+
+          {/* Lower Back Flat on Mat */}
+          <ellipse cx="-15" cy="42" rx="14" ry="9" fill={shorts} />
+
+          {/* Thighs Vertical at 90 deg, Shins Horizontal at 90 deg */}
+          <line x1="-15" y1="42" x2="-15" y2="10" stroke={skin} strokeWidth="12" strokeLinecap="round" />
+          <line x1="-15" y1="10" x2="35" y2="10" stroke={skin} strokeWidth="11" strokeLinecap="round" />
+          <circle cx="38" cy="10" r="5" fill={shoes} />
+
+          {/* Curling Torso & Head */}
+          <g transform={`rotate(${crunchLift}, -15, 42)`}>
+            <path d="M-15,40 L-42,32 L-36,18 L-10,26 Z" fill={shirt} />
+            <circle cx="-48" cy="24" r="9.5" fill={skin} />
+            <path d="M-54,18 Q-48,14 -42,20 Z" fill="#2E241E" />
+
+            {/* Hands behind head */}
+            <path d="M-36,22 L-52,14 L-46,26" fill="none" stroke={shirt} strokeWidth="7" strokeLinecap="round" />
+          </g>
+        </g>
+      );
+    }
+
+    // ==========================================
+    // 23. DEFAULT: MOUNTAIN POSE (Tadasana) & PRANAYAMA BREATH FLOW
     // ==========================================
     const stretchY = t01 * 10;
     return (
