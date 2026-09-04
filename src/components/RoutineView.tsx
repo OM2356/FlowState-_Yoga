@@ -96,7 +96,7 @@ export function generateDefaultExercises(): RoutineExerciseItem[] {
 
 export default function RoutineView({ 
   initialExercises, 
-  dayTitle = "Day 9", 
+  dayTitle = "Daily Flow", 
   onStartFlow,
   onBack
 }: RoutineViewProps) {

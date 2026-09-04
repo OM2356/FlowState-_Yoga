@@ -1482,6 +1482,24 @@ export const ThreeYogaHuman: React.FC<ThreeYogaHumanProps> = ({
           targetRotations.rightShin.set(0, 0, 0);
           break;
 
+        case "catCow":
+        case "tabletop":
+          // Cat-Cow Tabletop Spine Mobility Flow
+          targetPositions.pelvis.set(0, 0.48, 0);
+          targetRotations.pelvis.set(degToRad(12), 0, 0);
+          targetRotations.spine.set(degToRad(-18), 0, 0);
+          targetRotations.chest.set(degToRad(-12), 0, 0);
+          targetRotations.head.set(degToRad(-20), 0, 0);
+          targetRotations.leftArm.set(degToRad(85), 0, degToRad(8));
+          targetRotations.leftForearm.set(0, 0, 0);
+          targetRotations.rightArm.set(degToRad(85), 0, degToRad(-8));
+          targetRotations.rightForearm.set(0, 0, 0);
+          targetRotations.leftLeg.set(degToRad(85), 0, degToRad(-4));
+          targetRotations.leftShin.set(degToRad(90), 0, 0);
+          targetRotations.rightLeg.set(degToRad(85), 0, degToRad(4));
+          targetRotations.rightShin.set(degToRad(90), 0, 0);
+          break;
+
         default:
           // Standard kinematics fallback using raw angles
           targetPositions.pelvis.set(0, 1.05 - (k.elevationY || 0) * 0.5, 0);

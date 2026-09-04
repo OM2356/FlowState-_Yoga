@@ -1,6 +1,8 @@
 {
-  "name": "FlowState - Realistic Yoga & Recovery Studio",
-  "description": "Mental-wellbeing and physical-recovery yoga platform with realistic human posture visualizers, dynamic flows, guided audio breathing, and pose encyclopedia.",
-  "requestFramePermissions": [],
+  "name": "VedaVerse — Presentation Deck & Live 3D Pose Studio",
+  "description": "VedaVerse — Presentation Deck and Live 2D-to-3D Yoga Pose Tracking Studio: Real-time webcam AI pose estimation, 3D avatar mirroring, biomechanical angle analysis, and alignment feedback.",
+  "requestFramePermissions": [
+    "camera"
+  ],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

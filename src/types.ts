@@ -151,6 +151,7 @@ export interface YogaPose {
   };
   kinematics: HumanPoseKinematics;
   iconName?: string;
+  model3d?: string; // e.g. "01_mountain-pose.glb"
 }
 
 export interface FlowItem {

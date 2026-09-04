@@ -62,7 +62,8 @@ export const YOGA_POSES: YogaPose[] = [
       symmetry: true,
       facing: "front",
       poseArchetype: "tadasana"
-    }
+    },
+    model3d: "01_mountain-pose.glb"
   },
   {
     id: "downward-dog",
@@ -125,7 +126,8 @@ export const YOGA_POSES: YogaPose[] = [
       symmetry: true,
       facing: "side",
       poseArchetype: "downwardDog"
-    }
+    },
+    model3d: "02_downward-dog.glb"
   },
   {
     id: "warrior-1",
@@ -251,7 +253,8 @@ export const YOGA_POSES: YogaPose[] = [
       symmetry: false,
       facing: "front",
       poseArchetype: "warrior2"
-    }
+    },
+    model3d: "03_warrior-two.glb"
   },
   {
     id: "warrior-3",
@@ -377,7 +380,8 @@ export const YOGA_POSES: YogaPose[] = [
       symmetry: false,
       facing: "front",
       poseArchetype: "tree"
-    }
+    },
+    model3d: "04_tree-pose.glb"
   },
   {
     id: "triangle-pose",
@@ -502,7 +506,8 @@ export const YOGA_POSES: YogaPose[] = [
       symmetry: true,
       facing: "side",
       poseArchetype: "childPose"
-    }
+    },
+    model3d: "05_childs-pose.glb"
   },
   {
     id: "cobra-pose",
@@ -565,7 +570,8 @@ export const YOGA_POSES: YogaPose[] = [
       symmetry: true,
       facing: "side",
       poseArchetype: "cobra"
-    }
+    },
+    model3d: "06_cobra-pose.glb"
   },
   {
     id: "upward-facing-dog",
@@ -752,7 +758,8 @@ export const YOGA_POSES: YogaPose[] = [
       symmetry: true,
       facing: "side",
       poseArchetype: "bridge"
-    }
+    },
+    model3d: "09_bridge-pose.glb"
   },
   {
     id: "chair-pose",
@@ -1000,7 +1007,8 @@ export const YOGA_POSES: YogaPose[] = [
       symmetry: true,
       facing: "side",
       poseArchetype: "forwardFold"
-    }
+    },
+    model3d: "07_seated-fold.glb"
   },
   {
     id: "camel-pose",
@@ -1126,7 +1134,8 @@ export const YOGA_POSES: YogaPose[] = [
       symmetry: true,
       facing: "floor",
       poseArchetype: "savasana"
-    }
+    },
+    model3d: "10_savasana.glb"
   },
   {
     id: "seated-twist",
@@ -1741,7 +1750,68 @@ export const YOGA_POSES: YogaPose[] = [
       symmetry: true,
       facing: "side",
       poseArchetype: "wheelPose"
-    }
+    },
+    model3d: "wheel-pose.glb"
+  },
+  {
+    id: "cat-cow",
+    name: "Cat-Cow Flow",
+    sanskritName: "Marjaryasana–Bitilasana",
+    englishPronunciation: "mahr-jahr-ee-AHS-anna bee-tee-LAHS-anna",
+    category: "seatedRestorative",
+    difficulty: "beginner",
+    primaryMuscles: ["erectorSpinae", "coreAbdominals"],
+    secondaryMuscles: ["deltoidsShoulders", "cervicalNeck", "latissimusDorsi"],
+    benefits: ["spineFlexibility", "lowerBackPain", "stressRelief", "deskPosturedetox"],
+    recommendedHoldSeconds: 36,
+    description: "A synchronized breath-movement vinyasa that warms the spine through gentle alternating flexion and extension, lubricating the vertebrae and releasing back stiffness.",
+    stepByStepInstructions: [
+      "Start on your hands and knees in tabletop position with wrists directly under shoulders and knees under hips.",
+      "Inhale into Cow Pose (Bitilasana): drop your belly toward the mat, lift your sitting bones, and gaze gently toward the ceiling.",
+      "Exhale into Cat Pose (Marjaryasana): press through hands to round your spine toward the ceiling, tucking your tailbone and chin toward chest.",
+      "Continue flowing smoothly between Cat and Cow with each inhalation and exhalation."
+    ],
+    breathGuide: {
+      inhaleAction: "Inhale to arch the back, opening chest and throat (Cow).",
+      exhaleAction: "Exhale to dome the back, drawing navel into spine (Cat).",
+      holdNotes: "Flow fluidly like a wave moving along your vertebral column."
+    },
+    alignmentCues: [
+      { joint: "Wrists & Shoulders", cue: "Wrists stacked directly below shoulders with fingers spread wide." },
+      { joint: "Spine & Breath", cue: "Initiate movement from the tailbone, letting the ripple travel up to the head." }
+    ],
+    commonMistakes: [
+      { mistake: "Moving too fast without breath connection", correction: "Slow down and let each full breath dictate the duration of the stretch." }
+    ],
+    modifications: {
+      beginner: "Perform seated in a chair by placing hands on knees and rolling the spine.",
+      advanced: "Add gentle lateral barrel rolls through the ribcage for multi-planar mobility.",
+      propUsage: "Place a folded blanket under sensitive knees."
+    },
+    kinematics: {
+      headTilt: -20,
+      neckAngle: -10,
+      spineCurve: 0.4,
+      torsoAngle: 0,
+      pelvisTilt: 10,
+      leftShoulderAngle: 85,
+      leftElbowAngle: 0,
+      leftWristAngle: 90,
+      rightShoulderAngle: 85,
+      rightElbowAngle: 0,
+      rightWristAngle: 90,
+      leftHipAngle: 85,
+      leftKneeAngle: 90,
+      leftAnkleAngle: 40,
+      rightHipAngle: 85,
+      rightKneeAngle: 90,
+      rightAnkleAngle: 40,
+      elevationY: 0.48,
+      symmetry: true,
+      facing: "side",
+      poseArchetype: "catCow"
+    },
+    model3d: "08_cat-cow.glb"
   },
   {
     id: "skater-jump",
